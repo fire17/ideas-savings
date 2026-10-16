@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>חיסכון+ · מודול חיסכון</title>
+<meta name="description" content="אב-טיפוס של מנוע חיסכון שמוטמע באפליקציית דילים. כל השמות והנתונים בדויים.">
+<style>
+/* ===== tokens ===== */
+:root{
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Hebrew","Segoe UI",Roboto,"Noto Sans Hebrew","Arial Hebrew",Arial,sans-serif;
+  --page:#E8ECF2; --page-a:#D7F2E6; --page-b:#DCE6FF; --page-c:#EFE4FF;
+  --app:#F2F2F7; --aur-a:rgba(52,199,89,.20); --aur-b:rgba(10,132,255,.14); --aur-c:rgba(175,82,222,.12);
+  --glass:rgba(255,255,255,.68); --glass-hi:rgba(255,255,255,.86); --glass-line:rgba(255,255,255,.75);
+  --bar:rgba(249,249,251,.78); --sheet:#F2F2F7; --group:#FFFFFF;
+  --label:#0B0B0F; --label-2:rgba(60,60,67,.74); --label-3:rgba(60,60,67,.46); --hair:rgba(60,60,67,.14);
+  --fill:rgba(118,118,128,.12); --press:rgba(0,0,0,.05);
+  --tint:#007AFF; --tint-soft:rgba(0,122,255,.11); --green:#1E9E50; --green-soft:rgba(52,199,89,.15);
+  --orange:#FF9500; --red:#FF3B30; --red-soft:rgba(255,59,48,.10);
+  --hero-a:#2FCB74; --hero-b:#17AE90; --hero-c:#1597B4;
+  --shadow:0 1px 1px rgba(16,24,40,.03),0 10px 28px -8px rgba(16,24,40,.10);
+  --spring:cubic-bezier(.2,1.25,.3,1); --spring-soft:cubic-bezier(.22,1,.36,1); --spring-dur:.6s; --soft-dur:.55s;
+  --sb:54px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#050507; --page-a:rgba(48,209,88,.10); --page-b:rgba(10,132,255,.10); --page-c:rgba(191,90,242,.08);
+    --app:#000000; --aur-a:rgba(48,209,88,.16); --aur-b:rgba(10,132,255,.14); --aur-c:rgba(191,90,242,.10);
+    --glass:rgba(30,30,34,.62); --glass-hi:rgba(58,58,62,.9); --glass-line:rgba(255,255,255,.07);
+    --bar:rgba(22,22,24,.78); --sheet:#1C1C1E; --group:#2C2C2E;
+    --label:#F5F5F7; --label-2:rgba(235,235,245,.68); --label-3:rgba(235,235,245,.38); --hair:rgba(84,84,88,.45);
+    --fill:rgba(118,118,128,.24); --press:rgba(255,255,255,.07);
+    --tint:#0A84FF; --tint-soft:rgba(10,132,255,.18); --green:#30D158; --green-soft:rgba(48,209,88,.16);
+    --red:#FF453A; --red-soft:rgba(255,69,58,.15);
+    --hero-a:#1FA75D; --hero-b:#108C78; --hero-c:#0E7692;
+    --shadow:0 1px 1px rgba(0,0,0,.2),0 12px 30px -10px rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#050507; --page-a:rgba(48,209,88,.10); --page-b:rgba(10,132,255,.10); --page-c:rgba(191,90,242,.08);
+  --app:#000000; --aur-a:rgba(48,209,88,.16); --aur-b:rgba(10,132,255,.14); --aur-c:rgba(191,90,242,.10);
+  --glass:rgba(30,30,34,.62); --glass-hi:rgba(58,58,62,.9); --glass-line:rgba(255,255,255,.07);
+  --bar:rgba(22,22,24,.78); --sheet:#1C1C1E; --group:#2C2C2E;
+  --label:#F5F5F7; --label-2:rgba(235,235,245,.68); --label-3:rgba(235,235,245,.38); --hair:rgba(84,84,88,.45);
+  --fill:rgba(118,118,128,.24); --press:rgba(255,255,255,.07);
+  --tint:#0A84FF; --tint-soft:rgba(10,132,255,.18); --green:#30D158; --green-soft:rgba(48,209,88,.16);
+  --red:#FF453A; --red-soft:rgba(255,69,58,.15);
+  --hero-a:#1FA75D; --hero-b:#108C78; --hero-c:#0E7692;
+  --shadow:0 1px 1px rgba(0,0,0,.2),0 12px 30px -10px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+/* ===== base ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);color:var(--label);background:var(--page);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:inherit}
+input{font:inherit;color:inherit}
+svg{display:block}
+.num{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);border:.5px solid var(--glass-line);box-shadow:var(--shadow)}
+.tap{transition:transform var(--spring-dur) var(--spring),background-color .2s,opacity .2s,box-shadow .3s}
+.tap.pressed{transform:scale(.965);transition:transform .14s cubic-bezier(.3,.7,.4,1),background-color .1s}
+.row.pressed,.tab.pressed{transform:none;background-color:var(--press)}
+:focus-visible{outline:2.5px solid var(--tint);outline-offset:2px;border-radius:10px}
+
+/* ===== page + device ===== */
+.page{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;gap:72px;padding:24px;
+  background:radial-gradient(700px 520px at 85% 8%,var(--page-a),transparent 70%),radial-gradient(640px 520px at 8% 92%,var(--page-b),transparent 70%),radial-gradient(520px 420px at 45% 50%,var(--page-c),transparent 70%),var(--page)}
+.device{position:relative;flex:none;width:390px;height:844px;border-radius:58px;background:#000;transform:scale(var(--fit,1));
+  box-shadow:0 0 0 1.5px #3b3b3f,0 0 0 11px #121214,0 0 0 12.5px #4a4a4f,0 50px 90px -30px rgba(18,28,58,.45),0 30px 50px -30px rgba(0,0,0,.4)}
+.device::before,.device::after{content:"";position:absolute;width:4px;border-radius:3px;background:#2a2a2e}
+.device::before{left:-15.5px;top:180px;height:64px;box-shadow:0 84px 0 #2a2a2e,0 -62px 0 0 #2a2a2e}
+.device::after{right:-15.5px;top:230px;height:100px}
+.app{position:absolute;inset:0;border-radius:inherit;overflow:hidden;background:#000;isolation:isolate}
+.island{position:absolute;top:11px;left:50%;width:124px;height:36px;margin-left:-62px;border-radius:22px;background:#000;z-index:200;color:#fff;overflow:hidden;
+  transition:width .6s var(--spring),height .6s var(--spring),margin .6s var(--spring),border-radius .6s var(--spring)}
+.island.wide{width:350px;margin-left:-175px;height:66px;border-radius:33px}
+.island .msg{position:absolute;inset:0;display:flex;align-items:center;gap:11px;padding:0 18px;opacity:0;transform:scale(.9);transition:opacity .2s,transform .4s var(--spring);direction:rtl}
+.island.wide .msg{opacity:1;transform:none;transition-delay:.12s}
+.island .msg .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(48,209,88,.22);color:#30D158}
+.island .msg .ic.warn{background:rgba(255,159,10,.22);color:#FF9F0A}
+.island .msg .ic svg{width:19px;height:19px}
+.island .msg b{font-size:14.5px;font-weight:600;line-height:1.25;display:block}
+.island .msg span{font-size:12.5px;opacity:.65}
+.statusbar{position:absolute;top:0;left:0;right:0;height:var(--sb);z-index:150;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 44px;direction:ltr;color:var(--label);font-weight:600;font-size:16.5px;pointer-events:none}
+.statusbar .ics{display:flex;gap:6px;align-items:center}
+.app.sheeted .statusbar,.app.inbank .statusbar{color:#fff}
+.app.inbank .homebar{background:#101828}
+.homebar{position:absolute;bottom:8px;left:50%;width:136px;height:5px;margin-left:-68px;border-radius:3px;background:var(--label);opacity:.85;z-index:150;pointer-events:none}
+
+/* ===== stage, views ===== */
+.stage{position:absolute;inset:0;background:var(--app);overflow:hidden;transform-origin:50% 0;transition:transform var(--soft-dur) var(--spring-soft),border-radius var(--soft-dur) var(--spring-soft),filter .3s}
+.stage::before{content:"";position:absolute;inset:-20% -20% 30% -20%;pointer-events:none;z-index:0;
+  background:radial-gradient(260px 220px at 82% 10%,var(--aur-a),transparent 70%),radial-gradient(260px 240px at 10% 26%,var(--aur-b),transparent 70%),radial-gradient(240px 200px at 70% 60%,var(--aur-c),transparent 70%)}
+.app.sheeted .stage{transform:translateY(calc(var(--sb) - 8px)) scale(.92);border-radius:38px;filter:brightness(.82)}
+.view{position:absolute;inset:0;display:none;z-index:1}
+.view.on{display:block;animation:viewIn .5s var(--spring-soft) both}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:calc(var(--sb) + 4px) 16px 112px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.cnav{position:absolute;top:0;left:0;right:0;height:calc(var(--sb) + 44px);padding-top:var(--sb);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:17px;z-index:40;
+  background:var(--bar);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border-bottom:.5px solid var(--hair);opacity:0;transition:opacity .25s;pointer-events:none}
+.cnav.on{opacity:1}
+.lt{display:flex;align-items:flex-end;gap:10px;margin:8px 4px 16px}
+.lt .tt{flex:1;min-width:0}
+.lt h1{font-size:34px;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+.by{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--label-2);margin-bottom:4px}
+.by .mk{width:17px;height:17px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;background:linear-gradient(135deg,var(--hero-a),var(--hero-c))}
+.round{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--tint)}
+.round svg{width:21px;height:21px}
+
+/* ===== tab bar ===== */
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:84px;padding-bottom:24px;display:grid;grid-template-columns:repeat(3,1fr);z-index:45;
+  background:var(--bar);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);border-top:.5px solid var(--hair)}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--label-3);font-size:10.5px;font-weight:600;position:relative;border-radius:12px;margin:4px}
+.tab svg{width:26px;height:26px;transition:transform .5s var(--spring)}
+.tab.on{color:var(--tint)}
+.tab.on svg{transform:scale(1.06)}
+.tab .badge{position:absolute;top:3px;left:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:none;place-items:center;animation:pop .6s var(--spring)}
+.tab .badge.show{display:grid}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ===== shared parts ===== */
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:26px 6px 10px}
+.sec h3{font-size:20px;font-weight:700}
+.sec span{font-size:13px;color:var(--label-3)}
+.card{border-radius:22px;padding:16px}
+.tile{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;flex:none;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.25)}
+.tile svg{width:24px;height:24px}
+.c-purple{background:linear-gradient(160deg,#C56CF0,#9B4DDB)} .c-blue{background:linear-gradient(160deg,#3D9BFF,#0A6CFF)}
+.c-orange{background:linear-gradient(160deg,#FFB340,#FF8A00)} .c-pink{background:linear-gradient(160deg,#FF5E7E,#F2304F)}
+.c-green{background:linear-gradient(160deg,#4CD97B,#22B35C)} .c-indigo{background:linear-gradient(160deg,#7A78F0,#4E4CD8)} .c-teal{background:linear-gradient(160deg,#4CC9DE,#1FA2BC)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;border-radius:16px;background:var(--tint);color:#fff;font-weight:600;font-size:17px}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn.plain{background:transparent;color:var(--tint);height:46px;font-size:16.5px}
+.btn.red{background:var(--red)}
+.btn.soft{background:var(--tint-soft);color:var(--tint)}
+.btn svg{width:20px;height:20px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:99px;background:var(--tint-soft);color:var(--tint);font-weight:650;font-size:14.5px;white-space:nowrap}
+.pill svg{width:15px;height:15px}
+.link{color:var(--tint);font-weight:600}
+.group{background:var(--group);border-radius:14px;overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 16px;position:relative;text-align:start}
+.row + .row::before{content:"";position:absolute;top:0;inset-inline-start:var(--inset,16px);inset-inline-end:0;height:.5px;background:var(--hair)}
+.row .nm{flex:1;min-width:0;font-size:16px}
+.row .nm small{display:block;font-size:13px;color:var(--label-2);line-height:1.3;margin-top:1px}
+.row .val{color:var(--label-2);font-size:15px}
+.row .chev{width:18px;height:18px;color:var(--label-3);flex:none}
+.logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:16px;flex:none}
+.gh{font-size:13px;color:var(--label-2);margin:18px 16px 7px;font-weight:500}
+.gf{font-size:12.5px;color:var(--label-3);margin:7px 16px 0;line-height:1.4}
+.check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--label-3);display:grid;place-items:center;flex:none;transition:all .35s var(--spring)}
+.check svg{width:14px;height:14px;color:#fff;transform:scale(0);transition:transform .45s var(--spring)}
+.on > .check,.check.on{background:var(--tint);border-color:var(--tint)}
+.on > .check svg,.check.on svg{transform:scale(1)}
+.switch{width:51px;height:31px;border-radius:16px;background:var(--fill);position:relative;flex:none;transition:background .3s}
+.switch i{position:absolute;top:2px;inset-inline-start:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15),0 1px 1px rgba(0,0,0,.08);transition:transform .5s var(--spring)}
+.on > .switch,.switch.on{background:#34C759}
+.on > .switch i,.switch.on i{transform:translateX(-20px)}
+.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill);border-radius:10px;padding:2px;height:34px}
+.seg .thumb{position:absolute;top:2px;bottom:2px;inset-inline-start:2px;width:calc((100% - 4px)/var(--n));border-radius:8px;background:var(--glass-hi);box-shadow:0 3px 8px rgba(0,0,0,.10),0 0 0 .5px rgba(0,0,0,.04);transform:translateX(calc(var(--i) * -100%));transition:transform .5s var(--spring)}
+.seg button{position:relative;z-index:1;text-align:center;font-size:13.5px;font-weight:600;color:var(--label-2);border-radius:8px}
+.seg button.on{color:var(--label)}
+
+/* ===== setup ===== */
+.hero-setup{border-radius:28px;padding:22px 20px 20px;position:relative;overflow:hidden;animation:rise .8s var(--spring-soft) both}
+.orb{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,var(--hero-a),var(--hero-b) 55%,var(--hero-c));box-shadow:0 10px 24px -8px rgba(23,174,144,.6);margin-bottom:16px}
+.orb svg{width:30px;height:30px}
+.hero-setup h2{font-size:26px;line-height:1.18;font-weight:700}
+.hero-setup p{font-size:15.5px;color:var(--label-2);margin-top:8px}
+.example{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:7px 12px 7px 14px;border-radius:99px;background:var(--green-soft);color:var(--green);font-size:14px;font-weight:600}
+.example b{font-weight:800}
+.choice{display:flex;align-items:center;gap:14px;width:100%;margin-top:12px;padding:16px;border-radius:22px;position:relative;animation:rise .8s var(--spring-soft) both}
+.choice .tx{flex:1;min-width:0}
+.choice .tx b{display:block;font-size:16.5px;font-weight:650}
+.choice .tx span{display:block;font-size:13.5px;color:var(--label-2);margin-top:2px;line-height:1.35}
+.choice .chev{width:18px;height:18px;color:var(--label-3);flex:none}
+.rec{position:absolute;top:-9px;inset-inline-end:16px;font-size:11.5px;font-weight:700;color:#fff;background:var(--tint);padding:2px 9px;border-radius:99px;box-shadow:0 4px 10px -2px rgba(0,122,255,.5)}
+.drop{cursor:pointer;border:1.5px dashed var(--label-3);background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.drop.over{border-color:var(--tint);background:var(--tint-soft);transform:scale(1.02)}
+.drop input{display:none}
+.drop.reading .tile{animation:breathe 1s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(.9)}}
+.drop .tx .bar{height:4px;border-radius:2px;background:var(--fill);overflow:hidden;margin-top:9px;display:none}
+.drop .bar i{display:block;height:100%;width:0;background:var(--tint);border-radius:2px;transition:width .8s var(--spring-soft)}
+.drop.reading .tx .bar{display:block}
+.sample{display:flex;align-items:center;justify-content:center;gap:6px;margin:14px auto 0;font-size:15px;color:var(--tint);font-weight:600;padding:8px 14px;border-radius:12px}
+.sample svg{width:17px;height:17px}
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px;animation:rise .8s var(--spring-soft) .18s both}
+.trust div{border-radius:18px;padding:12px 10px;text-align:center;font-size:12.5px;font-weight:600;color:var(--label-2);line-height:1.3}
+.trust svg{width:22px;height:22px;margin:0 auto 6px;color:var(--green)}
+.fine{font-size:12px;color:var(--label-3);text-align:center;margin:18px 10px 0;line-height:1.45}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ===== dashboard ===== */
+.sync{display:inline-flex;align-items:center;gap:8px;height:30px;padding:0 12px;border-radius:99px;font-size:13px;font-weight:600;color:var(--label-2);margin:0 2px 12px}
+.sync i{width:8px;height:8px;border-radius:50%;background:#34C759;animation:ping 2.2s infinite}
+.sync.busy i{background:var(--orange);animation:pingo 1s infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(52,199,89,.45)}70%,100%{box-shadow:0 0 0 7px rgba(52,199,89,0)}}
+@keyframes pingo{0%{box-shadow:0 0 0 0 rgba(255,149,0,.5)}70%,100%{box-shadow:0 0 0 7px rgba(255,149,0,0)}}
+.hero{position:relative;overflow:hidden;border-radius:28px;padding:20px 20px 18px;color:#fff;background:linear-gradient(140deg,var(--hero-a) 0%,var(--hero-b) 52%,var(--hero-c) 100%);box-shadow:0 22px 40px -20px rgba(21,151,140,.75);animation:rise .8s var(--spring-soft) both}
+.hero::before{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.28),transparent);top:-150px;right:-90px}
+.hero::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.3);pointer-events:none}
+.hero .k{font-size:15px;font-weight:600;opacity:.9;position:relative}
+.hero .v{font-size:54px;font-weight:800;line-height:1.02;letter-spacing:-.02em;margin-top:2px;position:relative;display:flex;align-items:baseline;gap:8px}
+.hero .v small{font-size:18px;font-weight:600;opacity:.9;letter-spacing:0}
+.hero .meta{font-size:13.5px;opacity:.88;margin-top:4px;position:relative}
+.prog{margin-top:16px;position:relative}
+.prog .track{height:7px;border-radius:4px;background:rgba(255,255,255,.26);overflow:hidden}
+.prog .track i{display:block;height:100%;width:0;border-radius:4px;background:#fff;transition:width .9s var(--spring)}
+.prog .lb{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-top:7px;opacity:.95}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 2px 0}
+.chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px 0 9px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--label-2)}
+.chip i{width:7px;height:7px;border-radius:50%;background:#34C759}
+.chip.file i{background:var(--orange)}
+.list{display:grid;gap:10px}
+.finding{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;padding:14px;border-radius:22px;text-align:start;animation:rise .7s var(--spring) both}
+.finding .fb{min-width:0}
+.finding .fb b{display:block;font-size:15.5px;font-weight:650;line-height:1.3}
+.finding .fb span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;color:var(--label-2);margin-top:2px;line-height:1.35}
+.finding .fa{text-align:end}
+.finding .fa b{display:block;font-size:17px;font-weight:750;color:var(--green)}
+.finding .fa small{font-size:11.5px;color:var(--label-3);font-weight:500}
+.finding.done .fb,.finding.done .tile{opacity:.6}
+.finding.done .fa b{color:var(--label-3)}
+.donetag{display:inline-flex;align-items:center;gap:4px;margin-top:3px;font-size:11.5px;font-weight:700;color:var(--green)}
+.donetag svg{width:12px;height:12px}
+.skel{height:76px;border-radius:22px;position:relative;overflow:hidden}
+.skel::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);animation:shim 1.3s infinite}
+@keyframes shim{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+.cats .ct{display:grid;grid-template-columns:1fr auto;gap:5px 10px;align-items:center;padding:7px 0}
+.cats .ct span{font-size:14px}
+.cats .ct em{font-style:normal;font-size:13.5px;color:var(--label-2)}
+.cats .ct .bar{grid-column:1/-1;height:6px;border-radius:3px;background:var(--fill);overflow:hidden}
+.cats .ct .bar i{display:block;height:100%;border-radius:3px;background:var(--tint);opacity:.85;width:0;transition:width 1s var(--spring-soft)}
+.feed .fr{display:flex;gap:12px;align-items:flex-start;padding:9px 0}
+.feed .fr + .fr{border-top:.5px solid var(--hair)}
+.feed .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--green-soft);color:var(--green)}
+.feed .dot.t{background:var(--tint-soft);color:var(--tint)}
+.feed .dot svg{width:16px;height:16px}
+.feed .fr b{display:block;font-size:14.5px;font-weight:600}
+.feed .fr span{font-size:12.5px;color:var(--label-2)}
+.note{font-size:12.5px;color:var(--label-3);text-align:center;margin:18px 12px 0;line-height:1.5}
+
+/* ===== deals + profile ===== */
+.deal{border-radius:22px;overflow:hidden;margin-bottom:12px;animation:rise .7s var(--spring) both}
+.deal .band{height:84px;position:relative;display:flex;align-items:flex-end;padding:12px 14px;color:#fff}
+.deal .band b{font-size:19px;font-weight:750;position:relative}
+.deal .band .tile{position:absolute;top:12px;inset-inline-start:14px;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.22)}
+.deal .band .tile svg{width:20px;height:20px}
+.deal .band .mt{position:absolute;top:14px;inset-inline-end:14px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.24);padding:3px 9px;border-radius:99px}
+.deal .bd{padding:12px 14px 14px;display:flex;align-items:center;gap:10px}
+.deal .bd .tx{flex:1;min-width:0}
+.deal .bd .tx span{display:block;font-size:13.5px;color:var(--label-2)}
+.deal .bd .tx b{display:block;font-size:13px;color:var(--green);font-weight:700;margin-top:2px}
+.mini-deals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.md{border-radius:20px;padding:14px;animation:rise .7s var(--spring) both}
+.md .tile{width:36px;height:36px;border-radius:10px;margin-bottom:10px}
+.md .tile svg{width:20px;height:20px}
+.md b{display:block;font-size:14.5px;font-weight:650;line-height:1.3}
+.md span{font-size:12.5px;color:var(--label-2)}
+.promo{border-radius:24px;padding:18px;display:flex;gap:14px;align-items:center}
+.promo .tx{flex:1}
+.promo b{display:block;font-size:16px;font-weight:650}
+.promo span{font-size:13.5px;color:var(--label-2)}
+.me{display:flex;align-items:center;gap:14px;border-radius:22px;padding:14px 16px}
+.avatar{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px;background:linear-gradient(140deg,#8E8E93,#5A5A60)}
+.code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;direction:ltr;text-align:left;font-size:12px;line-height:1.6;padding:12px 14px;border-radius:12px;background:var(--fill);color:var(--label-2);white-space:pre;overflow:auto}
+
+/* ===== sheet ===== */
+.scrim{position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .35s}
+.app.sheeted .scrim{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:70;max-height:calc(100% - var(--sb) - 6px);display:flex;flex-direction:column;background:var(--sheet);border-radius:38px 38px 0 0;
+  transform:translateY(104%);transition:transform var(--soft-dur) var(--spring-soft);box-shadow:0 -12px 40px rgba(0,0,0,.14)}
+.sheet.show{transform:none}
+.sheet.tall{height:calc(100% - var(--sb) - 6px)}
+.grab{width:36px;height:5px;border-radius:3px;background:var(--label-3);opacity:.6;margin:7px auto 0;flex:none}
+.sh-head{display:flex;align-items:center;justify-content:space-between;padding:6px 14px 0;flex:none;min-height:46px}
+.ib{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--label-2)}
+.ib svg{width:16px;height:16px}
+.ib.hide{visibility:hidden}
+.dots{display:flex;gap:6px}
+.dots i{width:7px;height:7px;border-radius:4px;background:var(--label-3);opacity:.4;transition:all .5s var(--spring)}
+.dots i.on{width:20px;opacity:1;background:var(--tint)}
+.sh-body{flex:1;overflow-y:auto;padding:4px 20px 12px;scrollbar-width:none}
+.sh-body::-webkit-scrollbar{display:none}
+.sh-foot{flex:none;padding:10px 20px 30px;background:linear-gradient(to top,var(--sheet) 75%,transparent)}
+.pages{flex:1;display:flex;overflow:hidden;position:relative;min-height:0}
+.pages .track{display:flex;width:100%;height:100%;transform:translateX(calc(var(--p) * 100%));transition:transform var(--spring-dur) var(--spring-soft)}
+.pg{flex:0 0 100%;height:100%;overflow-y:auto;padding:4px 20px 12px;scrollbar-width:none}
+.pg::-webkit-scrollbar{display:none}
+.sh-title{font-size:28px;font-weight:700;line-height:1.15;margin-top:6px}
+.sh-sub{font-size:15px;color:var(--label-2);margin-top:6px}
+.tip{display:flex;gap:10px;align-items:center;margin-top:16px;padding:11px 14px;border-radius:14px;background:var(--tint-soft);color:var(--tint);font-size:13.5px;font-weight:600}
+.tip svg{width:18px;height:18px;flex:none}
+.idbox{margin-top:22px;text-align:center}
+.idin{width:100%;height:64px;border-radius:16px;border:0;background:var(--group);text-align:center;direction:ltr;font-size:28px;font-weight:600;letter-spacing:.14em;outline:none;box-shadow:inset 0 0 0 1.5px transparent;transition:box-shadow .3s}
+.idin:focus{box-shadow:inset 0 0 0 2px var(--tint)}
+.idin.ok{box-shadow:inset 0 0 0 2px #34C759}
+.idin.bad{box-shadow:inset 0 0 0 2px var(--red);animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.idmsg{font-size:13.5px;min-height:20px;margin-top:8px;color:var(--label-2)}
+.idmsg.ok{color:var(--green)} .idmsg.bad{color:var(--red)}
+.never{margin-top:18px}
+.never .row svg{width:20px;height:20px;flex:none}
+.never .x{color:var(--red)} .never .y{color:var(--green)}
+.partner{display:flex;gap:12px;align-items:center;margin-top:14px;padding:13px 14px;border-radius:16px;background:var(--green-soft)}
+.partner .tile{width:38px;height:38px;border-radius:11px}
+.partner .tile svg{width:20px;height:20px}
+.partner b{display:block;font-size:15px}
+.partner span{font-size:12.5px;color:var(--label-2)}
+.facts .row{align-items:flex-start;min-height:0;padding:10px 16px}
+.facts .row svg{width:20px;height:20px;color:var(--tint);flex:none;margin-top:1px}
+.facts .row .nm{font-size:14px;color:var(--label-2)}
+.opt .radio{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--label-3);flex:none;display:grid;place-items:center;transition:border-color .3s}
+.opt .radio::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--tint);transform:scale(0);transition:transform .45s var(--spring)}
+.opt.on .radio{border-color:var(--tint)}
+.opt.on .radio::after{transform:scale(1)}
+.opt .pr{font-weight:650;font-size:15px}
+.opt .tag{font-size:11px;font-weight:700;color:var(--tint);background:var(--tint-soft);padding:2px 7px;border-radius:6px;margin-inline-start:6px}
+.savebox{display:flex;align-items:center;justify-content:space-between;margin:16px 0 4px;padding:14px 16px;border-radius:16px;background:var(--green-soft);color:var(--green)}
+.savebox span{font-size:14px;font-weight:600}
+.savebox b{font-size:24px;font-weight:800}
+.how .row{min-height:0;padding:9px 16px;font-size:14px}
+.how .row i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--tint-soft);color:var(--tint);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.fhead{display:flex;gap:14px;align-items:center;margin-top:6px}
+.fhead .tile{width:52px;height:52px;border-radius:14px}
+.fhead .tile svg{width:28px;height:28px}
+.fhead h3{font-size:22px;font-weight:700;line-height:1.2}
+.success{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 10px 30px}
+.success svg.ring{width:96px;height:96px}
+.success svg.ring circle{stroke-dasharray:283;stroke-dashoffset:283;animation:draw .7s var(--spring-soft) forwards}
+.success svg.ring path{stroke-dasharray:60;stroke-dashoffset:60;animation:draw .45s .45s var(--spring-soft) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.success b{font-size:22px;font-weight:700;margin-top:16px}
+.success span{font-size:15px;color:var(--label-2);margin-top:6px}
+.status-on{font-size:12px;font-weight:700;color:var(--green);background:var(--green-soft);padding:3px 9px;border-radius:99px}
+
+/* ===== simulated bank app ===== */
+.bankapp{position:absolute;inset:0;z-index:120;background:linear-gradient(180deg,var(--bk,#0A3D91) 0,var(--bk,#0A3D91) 230px,#F3F5FA 230px);color:#101828;display:flex;flex-direction:column;
+  transform:translateY(100%) scale(.96);opacity:0;transition:transform .6s var(--spring-soft),opacity .3s;pointer-events:none}
+.bankapp.show{transform:none;opacity:1;pointer-events:auto}
+.bk-top{padding:calc(var(--sb) + 10px) 22px 0;color:#fff;display:flex;align-items:center;gap:10px}
+.bk-top .logo{background:#fff;width:38px;height:38px;border-radius:11px;font-size:18px}
+.bk-top b{font-size:18px;font-weight:700}
+.bk-top .sim{margin-inline-start:auto;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:99px}
+.bk-hi{color:#fff;padding:18px 22px 0;font-size:15px;opacity:.85}
+.bk-card{margin:18px 16px 0;background:#fff;border-radius:24px;padding:20px;box-shadow:0 20px 40px -18px rgba(10,30,80,.35)}
+.bk-card h3{font-size:20px;font-weight:700}
+.bk-card .rq{font-size:14.5px;color:#475467;margin-top:6px}
+.bk-list{margin-top:14px}
+.bk-list div{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #EAECF0;font-size:14.5px}
+.bk-list span{color:#667085}
+.bk-list b{font-weight:600;text-align:left}
+.ro{display:flex;gap:8px;align-items:center;margin-top:12px;padding:10px 12px;border-radius:12px;background:#EEF4FF;color:#1D4ED8;font-size:13px;font-weight:600}
+.ro svg{width:17px;height:17px;flex:none}
+.faceid{width:84px;height:84px;margin:22px auto 4px;color:var(--bk,#0A3D91);transition:color .3s}
+.faceid svg{width:84px;height:84px}
+.faceid.scan svg{animation:fscan 1s ease-in-out infinite}
+.faceid.done{color:#12B76A}
+@keyframes fscan{50%{transform:scale(.88);opacity:.6}}
+.facemsg{text-align:center;font-size:14px;color:#667085}
+.bk-foot{margin-top:auto;padding:16px 20px 36px}
+.bk-foot .btn{background:var(--bk,#0A3D91)}
+.bk-foot .plain{background:transparent;color:var(--bk,#0A3D91)}
+
+/* ===== push ===== */
+.push{position:absolute;top:calc(var(--sb) + 4px);left:10px;right:10px;z-index:130;border-radius:24px;padding:13px 14px;transform:translateY(-160%);transition:transform .7s var(--spring)}
+.push.show{transform:none}
+.push .ph{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--label-2)}
+.push .ph .mk{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:13px;background:linear-gradient(135deg,var(--hero-a),var(--hero-c))}
+.push .ph em{font-style:normal;margin-inline-start:auto}
+.push b{display:block;font-size:15px;margin-top:6px}
+.push p{font-size:14px;color:var(--label-2)}
+.push .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.push .acts button{text-align:center;height:38px;border-radius:12px;background:var(--fill);font-weight:600;font-size:14.5px}
+.push .acts .y{background:var(--tint);color:#fff}
+
+/* ===== side panel (desktop) ===== */
+.panel{width:390px;flex:none;color:var(--label)}
+.p-brand{display:flex;align-items:center;gap:10px}
+.p-brand .mk{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:22px;background:linear-gradient(140deg,var(--hero-a),var(--hero-b) 55%,var(--hero-c));box-shadow:0 10px 22px -8px rgba(23,174,144,.6)}
+.p-brand b{font-size:22px;font-weight:750}
+.p-brand span{font-size:12px;font-weight:650;color:var(--label-2);background:var(--glass);border:.5px solid var(--glass-line);padding:3px 10px;border-radius:99px;margin-inline-start:4px}
+.panel h2{font-size:30px;line-height:1.18;font-weight:700;margin-top:22px;letter-spacing:-.01em}
+.panel > p{font-size:16px;color:var(--label-2);margin-top:12px}
+.p-steps{list-style:none;margin-top:22px;display:grid;gap:12px}
+.p-steps li{display:flex;gap:12px;align-items:center}
+.p-steps i{font-style:normal;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--tint);background:var(--tint-soft);flex:none}
+.p-steps b{display:block;font-size:15px;font-weight:650}
+.p-steps span{font-size:13.5px;color:var(--label-2)}
+.p-box{margin-top:22px;border-radius:20px;padding:14px}
+.p-box h4{font-size:12.5px;font-weight:650;color:var(--label-2);margin:0 2px 8px}
+.p-jump{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.p-jump button{height:30px;padding:0 12px;border-radius:99px;background:var(--fill);font-size:13px;font-weight:600;color:var(--label-2)}
+.p-note{font-size:12.5px;color:var(--label-3);margin-top:16px;line-height:1.5}
+
+/* ===== phone-sized screens: the app is the page ===== */
+@media (max-width:820px){
+  .page{display:block;padding:0;background:var(--app)}
+  .panel{display:none}
+  .device{width:100%;height:100%;border-radius:0;box-shadow:none;transform:none}
+  .device::before,.device::after,.statusbar,.homebar{display:none}
+  .app{border-radius:0}
+  :root{--sb:max(env(safe-area-inset-top),14px)}
+  .island{top:max(env(safe-area-inset-top),8px);opacity:0;transform:scale(.6);transition:all .5s var(--spring)}
+  .island.wide{opacity:1;transform:none;width:calc(100% - 24px);margin-left:calc(-50% + 12px)}
+  .tabbar{height:calc(60px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<aside class="panel" aria-label="על האב-טיפוס">
+  <div class="p-brand"><span class="mk">+</span><b>חיסכון+</b><span>אב-טיפוס</span></div>
+  <h2>מנוע חיסכון שיושב בתוך אפליקציית הדילים שלכם.</h2>
+  <p>המשתמש מתחבר פעם אחת, דרך שותף בעל רישיון או בגרירת קובץ. מאותו רגע המנוע רץ ברקע, מוצא כסף ומזין את הדילים באפליקציה.</p>
+  <ol class="p-steps">
+    <li><i>1</i><div><b>חיבור אחד</b><span>שותף מורשה לשירותי מידע פיננסי, או קובץ מהבנק</span></div></li>
+    <li><i>2</i><div><b>הכל ברקע</b><span>סנכרון לילי וניתוח, בלי מסכים ובלי טפסים</span></div></li>
+    <li><i>3</i><div><b>חיסכון שהופך לדיל</b><span>כל ממצא מגיע ללשונית הדילים של האפליקציה המארחת</span></div></li>
+  </ol>
+  <div class="p-box glass">
+    <h4>הטמעה באפליקציה המארחת (קונספט)</h4>
+<div class="code">&lt;savings-module
+  partner="deals-app"
+  connect="licensed-partner files"
+  theme="auto" /&gt;</div>
+    <h4 style="margin-top:14px">מראה</h4>
+    <div class="seg" data-seg="theme" style="--n:3;--i:0"><span class="thumb"></span><button data-v="auto" class="on">אוטומטי</button><button data-v="light">בהיר</button><button data-v="dark">כהה</button></div>
+    <div class="p-jump">
+      <button class="tap" data-act="jump" data-to="setup">התחלה</button>
+      <button class="tap" data-act="jump" data-to="dash">לוח חיסכון</button>
+      <button class="tap" data-act="jump" data-to="deals">דילים</button>
+      <button class="tap" data-act="jump" data-to="conn">חיבורים</button>
+    </div>
+  </div>
+  <p class="p-note">כל השמות, המספרים והתנועות כאן בדויים. אין חיבור לבנק אמיתי, ושום מידע לא יוצא מהדפדפן.</p>
+</aside>
+
+<div class="device" id="device">
+  <div class="island" id="island"><div class="msg"><span class="ic"></span><div><b></b><span></span></div></div></div>
+  <div class="app" id="app">
+    <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="ics">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.7 2.3l1.1-1.1A9.6 9.6 0 008 1 9.6 9.6 0 001.2 3.8l1.1 1.1A8 8 0 018 2.6zm0 3.2c1.3 0 2.5.5 3.4 1.3l1.1-1.1A6.4 6.4 0 008 4.2 6.4 6.4 0 003.5 6l1.1 1.1A4.8 4.8 0 018 5.8zm0 3.2c.5 0 .9.2 1.2.5L8 10.7 6.8 9.5c.3-.3.7-.5 1.2-.5z"/></svg>
+      <svg width="27" height="13" viewBox="0 0 27 13" fill="none"><rect x=".5" y=".5" width="23" height="12" rx="3.5" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".45"/></svg>
+    </span></div>
+
+    <div class="stage" id="stage">
+      <!-- module: savings -->
+      <section class="view on" data-view="savings">
+        <div class="cnav" data-cnav>חיסכון</div>
+        <div class="scroll" data-scroll>
+          <div class="lt"><div class="tt"><div class="by"><span class="mk">+</span>מודול חיסכון+</div><h1>חיסכון</h1></div>
+            <button class="round glass tap" data-act="conn" aria-label="חיבורים והסכמות" data-i="sliders"></button></div>
+          <div id="savings-body"></div>
+        </div>
+      </section>
+      <!-- host app: deals -->
+      <section class="view" data-view="deals">
+        <div class="cnav" data-cnav>דילים</div>
+        <div class="scroll" data-scroll>
+          <div class="lt"><div class="tt"><div class="by">אפליקציה מארחת לדוגמה</div><h1>דילים</h1></div></div>
+          <div id="deals-body"></div>
+        </div>
+      </section>
+      <!-- host app: profile -->
+      <section class="view" data-view="profile">
+        <div class="cnav" data-cnav>פרופיל</div>
+        <div class="scroll" data-scroll>
+          <div class="lt"><div class="tt"><div class="by">אפליקציה מארחת לדוגמה</div><h1>פרופיל</h1></div></div>
+          <div class="me glass"><div class="avatar">מ</div><div><b style="font-size:18px">משתמש לדוגמה</b><div style="font-size:13.5px;color:var(--label-2)">חשבון הדגמה · כל הנתונים בדויים</div></div></div>
+          <p class="gh">מודול החיסכון</p>
+          <div class="group">
+            <button class="row tap" data-act="conn" style="--inset:58px"><span class="tile c-green" style="width:30px;height:30px;border-radius:8px" data-i="link"></span><span class="nm">חיבורים והסכמות</span><span class="val" id="pf-conn"></span><span data-i="chev" class="chev"></span></button>
+            <button class="row tap" data-act="push" style="--inset:58px"><span class="tile c-orange" style="width:30px;height:30px;border-radius:8px" data-i="bell"></span><span class="nm">הדגמה: תזכורת אישור כל 6 חודשים</span><span data-i="chev" class="chev"></span></button>
+          </div>
+          <p class="gh">מראה</p>
+          <div class="group" style="padding:10px"><div class="seg" data-seg="theme" style="--n:3;--i:0"><span class="thumb"></span><button data-v="auto" class="on">אוטומטי</button><button data-v="light">בהיר</button><button data-v="dark">כהה</button></div></div>
+          <p class="gh">על המודול</p>
+          <div class="group" style="padding:14px 16px;font-size:14px;color:var(--label-2)">חיסכון+ הוא מנוע שמוטמע באפליקציה המארחת. החיבור החי עובר דרך גוף בעל רישיון שירותי מידע פיננסי, וקבצים נקראים במכשיר. בדמו הזה הכל מדומה.</div>
+        </div>
+      </section>
+
+      <nav class="tabbar" role="tablist">
+        <button class="tab tap" data-act="tab" data-tab="deals" role="tab"><span data-i="tag"></span>דילים<span class="badge" id="deals-badge"></span></button>
+        <button class="tab tap on" data-act="tab" data-tab="savings" role="tab"><span data-i="spark"></span>חיסכון</button>
+        <button class="tab tap" data-act="tab" data-tab="profile" role="tab"><span data-i="user"></span>פרופיל</button>
+      </nav>
+    </div>
+
+    <div class="scrim" data-act="close"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+
+    <div class="bankapp" id="bankapp" aria-label="אפליקציית בנק מדומה">
+      <div class="bk-top"><span class="logo" id="bk-logo"></span><b id="bk-name"></b><span class="sim">אפליקציה מדומה</span></div>
+      <div class="bk-hi">אישור בקשה מגוף חיצוני</div>
+      <div class="bk-card">
+        <h3>בקשה לשיתוף מידע</h3>
+        <p class="rq"><b>שותף מורשה לדוגמה בע״מ</b> מבקש גישת קריאה למידע שלך, עבור מודול החיסכון באפליקציית הדילים.</p>
+        <div class="bk-list">
+          <div><span>מידע</span><b id="bk-data"></b></div>
+          <div><span>תוקף</span><b class="num" id="bk-until"></b></div>
+          <div><span>תעודת זהות</span><b class="num" id="bk-id"></b></div>
+        </div>
+        <div class="ro"><span data-i="eye"></span>קריאה בלבד. אי אפשר לבצע פעולות או העברות.</div>
+        <div class="faceid" id="faceid" data-i="face"></div>
+        <p class="facemsg" id="facemsg">אישור בזיהוי פנים</p>
+      </div>
+      <div class="bk-foot">
+        <button class="btn tap" id="bk-ok" data-act="bank-ok">אישור</button>
+        <button class="btn plain tap" data-act="bank-no">דחייה</button>
+      </div>
+    </div>
+
+    <div class="push glass" id="push" style="background:var(--glass-hi)">
+      <div class="ph"><span class="mk">+</span>חיסכון+ · דילים<em>עכשיו</em></div>
+      <b>להמשיך לחפש לך חיסכון?</b>
+      <p>עברו 6 חודשים מאז החיבור. לפי הכללים צריך אישור קצר כדי להמשיך.</p>
+      <div class="acts"><button class="tap" data-act="push-no">לא, לנתק</button><button class="tap y" data-act="push-yes">כן, להמשיך</button></div>
+    </div>
+    <div class="homebar"></div>
+  </div>
+</div>
+</div>
+
+<!-- Embedded FAKE sample export (same content as demo/sample-bank.csv; refreshed by src/gen_sample_csv.py) -->
+<script type="text/csv" id="sample-csv">
+תאריך,תאריך ערך,תיאור התנועה,אסמכתא,חובה,זכות,"יתרה בש""ח"
+01/07/2026,01/07/2026,משכורת - דמו טכנולוגיות בעמ,7067228,,14850.00,23270.15
+02/07/2026,02/07/2026,הוראת קבע - ביטוח גמא בריאות,4226067,186.40,,23083.75
+03/07/2026,03/07/2026,הוראת קבע - ביטוח אפסילון בריאות,2166941,142.10,,22941.65
+03/07/2026,03/07/2026,דביט - רשת שיווק בטא,1768805,395.10,,22546.55
+04/07/2026,04/07/2026,העברה - שכר דירה,4823498,5200.00,,17346.55
+05/07/2026,05/07/2026,הוראת קבע - סלולר אלפא,5855124,139.90,,17206.65
+06/07/2026,06/07/2026,דביט - תחנת דלק רו,2338687,222.25,,16984.40
+07/07/2026,07/07/2026,דביט - סטרימינג דלתא,4905582,69.90,,16914.50
+08/07/2026,08/07/2026,דביט - סטרימינג זטא,2694522,39.90,,16874.60
+08/07/2026,08/07/2026,דביט - רשת שיווק אומגה,7377459,396.75,,16477.85
+09/07/2026,09/07/2026,דביט - מוזיקה קאפא,5663623,23.90,,16453.95
+10/07/2026,10/07/2026,חיוב כרטיס נוף,8606962,3056.25,,13397.70
+10/07/2026,10/07/2026,דמי כרטיס אשראי,7120868,15.90,,13381.80
+11/07/2026,11/07/2026,דביט - מוזיקה למדא,3728882,21.90,,13359.90
+11/07/2026,11/07/2026,דביט - ענן סיגמא,7210606,11.90,,13348.00
+12/07/2026,12/07/2026,הוראת קבע - טלוויזיה אטא,6960453,189.00,,13159.00
+13/07/2026,13/07/2026,דביט - ענן טאו,4514944,7.90,,13151.10
+14/07/2026,14/07/2026,העברה מאת חבר,5479144,,200.00,13351.10
+15/07/2026,15/07/2026,ארנונה - עירייה לדוגמה,2197935,498.00,,12853.10
+16/07/2026,16/07/2026,דביט - משלוחים פי,3871230,92.69,,12760.41
+17/07/2026,17/07/2026,חשבון חשמל - ספק לדוגמה,9961380,439.25,,12321.16
+18/07/2026,18/07/2026,משיכת מזומן כספומט,5107245,500.00,,11821.16
+19/07/2026,19/07/2026,דביט - רשת שיווק בטא,3741438,342.71,,11478.45
+21/07/2026,21/07/2026,דביט - פארם כי,8755439,130.86,,11347.59
+22/07/2026,22/07/2026,דביט - תחנת דלק רו,7366205,202.86,,11144.73
+24/07/2026,24/07/2026,דביט - משלוחים פי,5528972,76.56,,11068.17
+25/07/2026,25/07/2026,הפקדה לפיקדון חיסכון,4684531,500.00,,10568.17
+27/07/2026,27/07/2026,דביט - רשת שיווק אומגה,6440561,341.88,,10226.29
+30/07/2026,30/07/2026,עמלת ניהול חשבון,1938483,12.90,,10213.39
+30/07/2026,30/07/2026,ריבית זכות,4842788,,2.81,10216.20
+01/08/2026,01/08/2026,משכורת - דמו טכנולוגיות בעמ,1538552,,14850.00,25066.20
+02/08/2026,02/08/2026,הוראת קבע - ביטוח גמא בריאות,6292423,186.40,,24879.80
+03/08/2026,03/08/2026,הוראת קבע - ביטוח אפסילון בריאות,7730428,142.10,,24737.70
+03/08/2026,03/08/2026,דביט - רשת שיווק בטא,5491946,381.02,,24356.68
+04/08/2026,04/08/2026,העברה - שכר דירה,2110460,5200.00,,19156.68
+05/08/2026,05/08/2026,הוראת קבע - סלולר אלפא,4539704,139.90,,19016.78
+06/08/2026,06/08/2026,דביט - תחנת דלק רו,6279418,284.44,,18732.34
+07/08/2026,07/08/2026,דביט - סטרימינג דלתא,4567281,69.90,,18662.44
+08/08/2026,08/08/2026,דביט - סטרימינג זטא,9375710,39.90,,18622.54
+08/08/2026,08/08/2026,דביט - רשת שיווק אומגה,7637601,469.23,,18153.31
+09/08/2026,09/08/2026,דביט - מוזיקה קאפא,8698256,23.90,,18129.41
+10/08/2026,10/08/2026,חיוב כרטיס נוף,3396987,3193.66,,14935.75
+10/08/2026,10/08/2026,דמי כרטיס אשראי,5443951,15.90,,14919.85
+11/08/2026,11/08/2026,דביט - מוזיקה למדא,3342608,21.90,,14897.95
+11/08/2026,11/08/2026,דביט - ענן סיגמא,5137722,11.90,,14886.05
+12/08/2026,12/08/2026,הוראת קבע - טלוויזיה אטא,5408072,189.00,,14697.05
+13/08/2026,13/08/2026,דביט - ענן טאו,8187926,7.90,,14689.15
+14/08/2026,14/08/2026,העברה מאת חבר,7700828,,150.00,14839.15
+15/08/2026,15/08/2026,ארנונה - עירייה לדוגמה,7073292,498.00,,14341.15
+16/08/2026,16/08/2026,דביט - משלוחים פי,4679591,129.19,,14211.96
+18/08/2026,18/08/2026,משיכת מזומן כספומט,3320821,500.00,,13711.96
+19/08/2026,19/08/2026,דביט - רשת שיווק בטא,9548432,387.60,,13324.36
+21/08/2026,21/08/2026,דביט - פארם כי,9279821,60.78,,13263.58
+22/08/2026,22/08/2026,דביט - תחנת דלק רו,2525206,272.52,,12991.06
+24/08/2026,24/08/2026,דביט - משלוחים פי,1790481,118.87,,12872.19
+25/08/2026,25/08/2026,הפקדה לפיקדון חיסכון,2839607,500.00,,12372.19
+27/08/2026,27/08/2026,דביט - רשת שיווק אומגה,3564251,361.25,,12010.94
+30/08/2026,30/08/2026,עמלת ניהול חשבון,3684052,12.90,,11998.04
+30/08/2026,30/08/2026,ריבית זכות,8082668,,1.47,11999.51
+01/09/2026,01/09/2026,משכורת - דמו טכנולוגיות בעמ,2065818,,14850.00,26849.51
+02/09/2026,02/09/2026,הוראת קבע - ביטוח גמא בריאות,7455324,186.40,,26663.11
+03/09/2026,03/09/2026,הוראת קבע - ביטוח אפסילון בריאות,7402509,142.10,,26521.01
+03/09/2026,03/09/2026,דביט - רשת שיווק בטא,8852574,452.30,,26068.71
+04/09/2026,04/09/2026,העברה - שכר דירה,9877065,5200.00,,20868.71
+05/09/2026,05/09/2026,הוראת קבע - סלולר אלפא,5218028,139.90,,20728.81
+06/09/2026,06/09/2026,דביט - תחנת דלק רו,1192619,250.29,,20478.52
+07/09/2026,07/09/2026,דביט - סטרימינג דלתא,2921859,69.90,,20408.62
+08/09/2026,08/09/2026,דביט - סטרימינג זטא,5476583,39.90,,20368.72
+08/09/2026,08/09/2026,דביט - רשת שיווק אומגה,6707197,365.77,,20002.95
+09/09/2026,09/09/2026,דביט - מוזיקה קאפא,2871534,23.90,,19979.05
+10/09/2026,10/09/2026,חיוב כרטיס נוף,5924115,2967.70,,17011.35
+10/09/2026,10/09/2026,דמי כרטיס אשראי,8294150,15.90,,16995.45
+11/09/2026,11/09/2026,דביט - מוזיקה למדא,3653446,21.90,,16973.55
+11/09/2026,11/09/2026,דביט - ענן סיגמא,8612220,11.90,,16961.65
+12/09/2026,12/09/2026,הוראת קבע - טלוויזיה אטא,1054447,189.00,,16772.65
+13/09/2026,13/09/2026,דביט - ענן טאו,5418934,7.90,,16764.75
+14/09/2026,14/09/2026,העברה מאת חבר,9398441,,150.00,16914.75
+15/09/2026,15/09/2026,ארנונה - עירייה לדוגמה,3997281,498.00,,16416.75
+16/09/2026,16/09/2026,דביט - משלוחים פי,9517485,130.28,,16286.47
+17/09/2026,17/09/2026,חשבון חשמל - ספק לדוגמה,2785277,444.57,,15841.90
+18/09/2026,18/09/2026,משיכת מזומן כספומט,6007072,500.00,,15341.90
+19/09/2026,19/09/2026,דביט - רשת שיווק בטא,9517169,374.05,,14967.85
+21/09/2026,21/09/2026,דביט - פארם כי,4337174,124.35,,14843.50
+22/09/2026,22/09/2026,דביט - תחנת דלק רו,3564217,287.58,,14555.92
+24/09/2026,24/09/2026,דביט - משלוחים פי,7273233,96.50,,14459.42
+25/09/2026,25/09/2026,הפקדה לפיקדון חיסכון,3710343,500.00,,13959.42
+27/09/2026,27/09/2026,דביט - רשת שיווק אומגה,9897858,399.37,,13560.05
+30/09/2026,30/09/2026,עמלת ניהול חשבון,1009594,12.90,,13547.15
+30/09/2026,30/09/2026,ריבית זכות,6438436,,3.49,13550.64
+</script>
+
+<script>
+"use strict";
+/*ENGINE-START: parsing + savings rules. Mirrors src/parse_statements.py. */
+const ils = (n, d=0) => '₪' + Number(n).toLocaleString('he-IL',{minimumFractionDigits:d, maximumFractionDigits:d});
+const ALIASES = { date:['תאריך','תאריך פעולה','תאריך עסקה','תאריך העסקה'], desc:['תיאור התנועה','תיאור','פרטים','שם בית העסק','שם בית עסק','סוג תנועה'],
+  debit:['חובה','בחובה','סכום חיוב','סכום החיוב'], credit:['זכות','בזכות'], amount:['סכום','סכום בש"ח','סכום עסקה'] };
+const norm = s => (s||'').replace(/["״]/g,'').replace(/\s+/g,' ').trim();
+function parseCSV(text){
+  text = text.replace(/^﻿/,''); const rows=[]; let row=[], f='', q=false;
+  for(let i=0;i<text.length;i++){ const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){f+='"';i++;} else q=false; } else f+=c; }
+    else if(c==='"') q=true; else if(c===','){ row.push(f); f=''; }
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n') i++; row.push(f); rows.push(row); row=[]; f=''; }
+    else f+=c; }
+  if(f||row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+function findCols(h){ h=h.map(norm); const c={}; for(const k in ALIASES){ for(const a of ALIASES[k]){ const i=h.indexOf(norm(a)); if(i>=0){ c[k]=i; break; } } } return (c.date!=null&&c.desc!=null&&(c.debit!=null||c.amount!=null))?c:null; }
+const num = s => { const v=parseFloat((s||'').replace(/[,₪\s]/g,'')); return isNaN(v)?0:v; };
+function pDate(s){ const m=(s||'').trim().match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{2,4})$/); if(m){ let y=+m[3]; if(y<100) y+=2000; return new Date(y,+m[2]-1,+m[1]); } const m2=(s||'').match(/^(\d{4})-(\d{2})-(\d{2})/); return m2? new Date(+m2[1],+m2[2]-1,+m2[3]) : null; }
+const RULES = [
+  [['משכורת','העברה מאת','ריבית זכות'],'הכנסות'], [['ביטוח'],'ביטוח'], [['דמי כרטיס','עמלת','עמלה','דמי ניהול'],'עמלות'],
+  [['סלולר','תקשורת','מובייל','אינטרנט ביתי'],'תקשורת'], [['סטרימינג','טלוויזיה','מוזיקה','ענן'],'מנויים דיגיטליים'],
+  [['רשת שיווק','מרכול','סופרמרקט'],'מזון וסופר'], [['משלוחים','משלוח'],'משלוחי אוכל'], [['דלק','תחבורה ציבורית','חניון'],'דלק ותחבורה'],
+  [['שכר דירה','משכנתא'],'דיור'], [['ארנונה','חשמל','מי ','תאגיד מים','גז'],'חשבונות הבית'], [['פארם','בית מרקחת'],'בריאות ופארם'],
+  [['כספומט','משיכת מזומן'],'מזומן'], [['פיקדון','חיסכון'],'חיסכון'], [['חיוב כרטיס'],'חיוב כרטיס אשראי'],
+];
+const categorize = d => { d=d.toLowerCase()+' '; for(const [k,c] of RULES) if(k.some(x=>d.includes(x))) return c; return 'אחר'; };
+const FAMILIES = { video:{name:'וידאו וטלוויזיה', keys:['סטרימינג','טלוויזיה']}, music:{name:'מוזיקה', keys:['מוזיקה']}, cloud:{name:'אחסון בענן', keys:['ענן']} };
+const pretty = m => m.replace(/\s+בריאות$/,'');
+const PHONE_BENCHMARK = 49.90;
+const PHONE_PLANS = [ {name:'סלולר למדא', note:'5G · 1,000GB · שיחות ללא הגבלה', price:49.90, deal:true}, {name:'סלולר סיגמא', note:'5G · ללא הגבלה · 2GB בחו״ל', price:59.90}, {name:'סלולר טאו', note:'4G · 500GB · שיחות ללא הגבלה', price:34.90} ];
+function parseStatement(text){
+  const rows=parseCSV(text); let cols=null, start=0;
+  for(let i=0;i<rows.length;i++){ cols=findCols(rows[i]); if(cols){ start=i+1; break; } }
+  if(!cols) throw new Error('לא זיהינו את מבנה הקובץ. צריך עמודות תאריך, תיאור וחובה או סכום.');
+  const out=[], need=Math.max(...Object.values(cols));
+  for(const r of rows.slice(start)){
+    if(r.length<=need) continue;
+    const d=pDate(r[cols.date]); if(!d) continue;
+    const desc=norm(r[cols.desc]); let debit, credit;
+    if(cols.debit==null){ const a=num(r[cols.amount]); debit=a>0?a:0; credit=a<0?-a:0; } else { debit=num(r[cols.debit]); credit=cols.credit!=null?num(r[cols.credit]):0; }
+    out.push({date:d, ym:d.getFullYear()*12+d.getMonth(), desc, merchant:desc.replace(/^(דביט|הוראת קבע|העברה|חיוב)\s*-\s*/,''), debit, credit, cat:categorize(desc)});
+  }
+  return out.sort((a,b)=>a.date-b.date);
+}
+function recurring(txs){
+  const by={}; for(const t of txs){ if(t.debit>0){ (by[t.merchant] ||= {}); by[t.merchant][t.ym]=(by[t.merchant][t.ym]||0)+t.debit; } }
+  const out={}; for(const m in by){ const v=Object.values(by[m]); if(v.length>=2) out[m]=Math.round(v.reduce((a,b)=>a+b,0)/v.length*100)/100; } return out;
+}
+function findSavings(txs){
+  const rec=recurring(txs), F=[];
+  for(const fk in FAMILIES){ const fam=FAMILIES[fk];
+    const hits=Object.entries(rec).filter(([m])=>fam.keys.some(k=>(m.toLowerCase()+' ').includes(k))).map(([m,a])=>({name:pretty(m),monthly:a}));
+    if(hits.length>=2){ const keep=hits.reduce((a,b)=>b.monthly>a.monthly?b:a).name; const names=hits.map(h=>h.name);
+      const list=names.length>2? names.slice(0,-1).join(', ')+' ו'+names.at(-1) : names.join(' ו');
+      const title = fk==='video' ? `${hits.length} שירותי צפייה במקביל` : fk==='music' ? 'שני מנויי מוזיקה' : 'שני מנויי אחסון בענן';
+      const detail = fk==='video' ? `${list}. רוב האנשים צופים בעיקר באחד.` : fk==='music' ? `${list}: משלמים פעמיים על אותה ספרייה.` : `${list}: נפח כפול שלא מנוצל.`;
+      F.push({type:'duplicate_subscription', fam:fk, family:fam.name, title, detail, members:hits, keep}); } }
+  for(const [m,a] of Object.entries(rec)) if(categorize(m)==='תקשורת' && a>PHONE_BENCHMARK)
+    F.push({type:'phone_plan', title:'חבילת הסלולר יקרה מדי', detail:`${pretty(m)}: ${ils(a,2)} לחודש. חבילות דומות מתחילות בערך ב-${ils(PHONE_BENCHMARK,2)}.`, merchant:pretty(m), current:a, plan:0});
+  for(const [m,a] of Object.entries(rec)) if(categorize(m)==='עמלות'){ const card=m.includes('כרטיס');
+    F.push({type:card?'card_fee':'bank_fee', title:card?'דמי כרטיס שאפשר לבטל':'עמלת ניהול חשבון', detail: card? `${ils(a,2)} בכל חודש. רוב חברות האשראי מוותרות על דמי כרטיס כשמבקשים.` : `${ils(a,2)} בכל חודש. אפשר לעבור למסלול בסיסי או דיגיטלי.`, monthlyFix:a}); }
+  const health=Object.entries(rec).filter(([m])=>categorize(m)==='ביטוח'&&m.includes('בריאות')).map(([m,a])=>({name:pretty(m),monthly:a}));
+  if(health.length>=2){ const keep=health.reduce((a,b)=>b.monthly>a.monthly?b:a).name;
+    F.push({type:'insurance_overlap', title:'שני ביטוחי בריאות חופפים', detail:`${health.map(h=>h.name).join(' ו')} גובות על כיסוי דומה. נאמת מול הר הביטוח לפני ביטול.`, members:health, keep}); }
+  F.forEach(f=>{ f.done=false; recalc(f); });
+  return F.sort((a,b)=>b.annual-a.annual);
+}
+function recalc(f){
+  let m=0;
+  if(f.members) m=f.members.filter(x=>x.name!==f.keep).reduce((a,b)=>a+b.monthly,0);
+  else if(f.type==='phone_plan') m=f.current-(PHONE_PLANS[f.plan]?.price ?? PHONE_BENCHMARK);
+  else m=f.monthlyFix;
+  f.monthly=Math.max(0,Math.round(m*100)/100); f.annual=Math.round(f.monthly*12*100)/100;
+}
+function categorySummary(txs){
+  const months=new Set(txs.map(t=>t.ym)).size||1, tot={};
+  for(const t of txs) if(t.debit>0) tot[t.cat]=(tot[t.cat]||0)+t.debit;
+  return Object.entries(tot).sort((a,b)=>b[1]-a[1]).map(([c,v])=>[c,Math.round(v/months*100)/100]);
+}
+/*ENGINE-END*/
+
+/* ---------- icons ---------- */
+const P = {
+  chev:'<path d="M15 6l-6 6 6 6"/>', back:'<path d="M9 6l6 6-6 6"/>', close:'<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  lock:'<rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 018 0v3"/>',
+  undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>',
+  link:'<path d="M10 14a4.5 4.5 0 006.4 0l3-3a4.5 4.5 0 00-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 00-6.4 0l-3 3a4.5 4.5 0 006.4 6.4l1-1"/>',
+  upload:'<path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 14.5V18a2 2 0 002 2h12a2 2 0 002-2v-3.5"/>',
+  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>', x:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>', ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.7 2.7L16 9.5"/>',
+  shield:'<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  bell:'<path d="M6 16V11a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/>',
+  file:'<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+  sliders:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>',
+  tv:'<rect x="3" y="5" width="18" height="12" rx="2.5"/><path d="M8 21h8M10.5 9.2v3.6L13.8 11z"/>',
+  music:'<path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
+  cloud:'<path d="M7 18a4.5 4.5 0 01-.6-9 6 6 0 0111.4 1.5A3.8 3.8 0 0117.5 18z"/>',
+  phone:'<rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/>',
+  card:'<rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
+  bank:'<path d="M3 9.5L12 4l9 5.5M5 10v7M9.5 10v7M14.5 10v7M19 10v7M3 20h18"/>',
+  tag:'<path d="M3.5 12.2V4.8c0-.7.6-1.3 1.3-1.3h7.4l8.3 8.3a1.3 1.3 0 010 1.8l-7.4 7.4a1.3 1.3 0 01-1.8 0z"/><circle cx="8" cy="8" r="1.6"/>',
+  user:'<circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.4-3.7 4.2-5.5 7.5-5.5s6.1 1.8 7.5 5.5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  dumbbell:'<path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/>', cup:'<path d="M5 8h11v6a5 5 0 01-5 5h-1a5 5 0 01-5-5z"/><path d="M16 10h1.5a2.5 2.5 0 010 5H16M8 3v2M11 3v2"/>',
+  bolt:'<path d="M13 2.5L5 13.5h6l-1 8 8-11h-6z"/>',
+  face:'<path d="M7 3H5a2 2 0 00-2 2v2M17 3h2a2 2 0 012 2v2M7 21H5a2 2 0 01-2-2v-2M17 21h2a2 2 0 002-2v-2"/><path d="M8.5 9v1.5M15.5 9v1.5M12 9v4.2h-1M9 16.2c1.8 1.4 4.2 1.4 6 0"/>'
+};
+const ico = (n, sw=2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+function paint(root=document){
+  root.querySelectorAll('[data-i]').forEach(el=>{ if(!el.dataset.p && P[el.dataset.i]){ el.insertAdjacentHTML('beforeend', ico(el.dataset.i, el.dataset.i==='face'?1.3:2)); el.dataset.p=1; } });
+}
+
+/* ---------- helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const fmtDate = d => `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()}`;
+const addMonths = (d, m) => { const x=new Date(d); x.setMonth(x.getMonth()+m); return x; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const wait = ms => new Promise(r=>setTimeout(r,ms));
+const HE_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+const rangeLabel = txs => { const a=txs[0].date, b=txs.at(-1).date; return a.getMonth()===b.getMonth() ? `${HE_MONTHS[a.getMonth()]} ${a.getFullYear()}` : `${HE_MONTHS[a.getMonth()]}–${HE_MONTHS[b.getMonth()]} ${b.getFullYear()}`; };
+const sampleText = () => $('#sample-csv').textContent.trim();
+
+/* real damped-spring easing, sampled into CSS linear() */
+function springEasing(k, c){
+  let x=0, v=0, t=0; const dt=1/600, pts=[];
+  while(t<3){ const a=-k*(x-1)-c*v; v+=a*dt; x+=v*dt; t+=dt; pts.push([t,x]); if(t>.25 && Math.abs(x-1)<.0008 && Math.abs(v)<.01) break; }
+  const T=pts.at(-1)[0], step=Math.max(1,Math.floor(pts.length/48));
+  const s=pts.filter((_,i)=>i%step===0).map(([tt,xx])=>`${xx.toFixed(4)} ${(tt/T*100).toFixed(1)}%`);
+  return {e:`linear(0, ${s.join(', ')}, 1)`, d:T};
+}
+function installSprings(){
+  if(!(window.CSS && CSS.supports('transition-timing-function','linear(0, 1)'))) return;
+  const r=document.documentElement.style, a=springEasing(240,19), b=springEasing(200,28);
+  r.setProperty('--spring',a.e); r.setProperty('--spring-dur',a.d.toFixed(2)+'s');
+  r.setProperty('--spring-soft',b.e); r.setProperty('--soft-dur',b.d.toFixed(2)+'s');
+}
+
+/* ---------- state ---------- */
+const SOURCES = [
+  {id:'nof',  kind:'card', name:'כרטיס נוף', note:'כרטיס אשראי · שם בדוי', color:'#FF9F0A', l:'נ'},
+  {id:'gal',  kind:'card', name:'כרטיס גל',  note:'כרטיס אשראי · שם בדוי', color:'#AF52DE', l:'ג'},
+  {id:'alon', kind:'bank', name:'בנק אלון',  note:'חשבון עו״ש · שם בדוי',  color:'#0A3D91', l:'א'},
+  {id:'erez', kind:'bank', name:'בנק ארז',   note:'חשבון עו״ש · שם בדוי',  color:'#C2410C', l:'ר'},
+  {id:'brosh',kind:'bank', name:'בנק ברוש',  note:'חשבון עו״ש · שם בדוי',  color:'#0F766E', l:'ב'},
+];
+const BASKETS = [
+  {id:'acct',  name:'תנועות בעו״ש', note:'12 חודשים אחורה'},
+  {id:'cards', name:'חיובי כרטיסי אשראי', note:'12 חודשים אחורה'},
+  {id:'loans', name:'הלוואות ומסגרות', note:'לא חובה. עוזר למצוא ריבית גבוהה'},
+];
+const SAMPLE_ID = '000 000 018';   // obviously fake demo number (valid check digit); never a real person's ID
+const S = { connected:false, mode:null, picked:new Set(['nof','alon']), baskets:new Set(['acct','cards']), years:3, idn:'', agreed:false,
+  txs:[], findings:[], months:0, fileName:'', connectedAt:new Date(), reconfirm:null, tab:'savings', revealed:0, streaming:false, page:0, queue:[], shown:0 };
+const demoId = () => SAMPLE_ID.replace(/\D/g,'');
+
+/* ---------- feedback ---------- */
+let islandT;
+function toast(title, sub='', kind='ok'){
+  const isl=$('#island'), ic=$('.ic',isl);
+  ic.className='ic'+(kind==='warn'?' warn':''); ic.innerHTML=ico(kind==='warn'?'bell':'check',2.4);
+  $('.msg b',isl).textContent=title; $('.msg span',isl).textContent=sub;
+  isl.classList.add('wide'); clearTimeout(islandT); islandT=setTimeout(()=>isl.classList.remove('wide'),2800);
+}
+function wirePress(){
+  const sel='.tap,.row,.btn';
+  const clear=()=>$$('.pressed').forEach(e=>e.classList.remove('pressed'));
+  document.addEventListener('pointerdown',e=>{ const t=e.target.closest(sel); if(!t||t.disabled) return; t.classList.add('pressed'); try{ navigator.vibrate&&navigator.vibrate(6); }catch(_){} });
+  ['pointerup','pointercancel','dragstart'].forEach(ev=>document.addEventListener(ev,clear));
+  document.addEventListener('pointerout',e=>{ const p=e.target.closest('.pressed'); if(p && !p.contains(e.relatedTarget)) clear(); });
+}
+
+/* ---------- tabs + scroll ---------- */
+function setTab(t){
+  S.tab=t;
+  $$('.view').forEach(v=>v.classList.toggle('on',v.dataset.view===t));
+  $$('.tab').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='deals'){ renderDeals(); $('#deals-badge').classList.remove('show'); }
+  if(t==='profile') $('#pf-conn').textContent = S.connected ? (S.mode==='live'?`${S.picked.size} מקורות`:'קובץ') : 'לא מחובר';
+}
+function wireScroll(){ $$('[data-scroll]').forEach(sc=>sc.addEventListener('scroll',()=>{ $('[data-cnav]',sc.parentNode).classList.toggle('on',sc.scrollTop>46); },{passive:true})); }
+
+/* ---------- savings: setup ---------- */
+function renderSavings(){ S.connected ? renderDash() : renderSetup(); }
+function renderSetup(){
+  let ex=''; try{ ex=ils(Math.round(findSavings(parseStatement(sampleText())).reduce((a,f)=>a+f.annual,0))); }catch(e){}
+  $('#savings-body').innerHTML = `
+    <div class="hero-setup glass">
+      <div class="orb">${ico('spark')}</div>
+      <h2>מתחברים פעם אחת.<br>את השאר עושים ברקע.</h2>
+      <p>המנוע קורא את התנועות שלך, מוצא מנויים כפולים, עמלות וביטוחים חופפים, וממשיך לחפש לבד כל לילה.</p>
+      ${ex?`<span class="example">בחשבון לדוגמה מצאנו <b class="num">${ex}</b> בשנה</span>`:''}
+    </div>
+    <button class="choice glass tap" data-act="connect" style="animation-delay:.06s;margin-top:16px">
+      <span class="rec">מומלץ</span><span class="tile c-blue">${ico('link')}</span>
+      <span class="tx"><b>חיבור דרך שותף מורשה</b><span>אישור אחד באפליקציית הבנק, בזיהוי פנים. מתעדכן לבד.</span></span>${ico('chev').replace('<svg','<svg class="chev"')}
+    </button>
+    <label class="choice glass drop tap" id="drop" style="animation-delay:.12s">
+      <input type="file" id="file" accept=".csv,text/csv,.txt">
+      <span class="tile c-orange">${ico('upload')}</span>
+      <span class="tx"><b id="drop-t">גררו לכאן קובץ מהבנק</b><span id="drop-s">CSV מאתר הבנק או חברת האשראי. נקרא רק במכשיר.</span><span class="bar"><i></i></span></span>
+    </label>
+    <button class="sample tap" data-act="sample">${ico('file')}אין קובץ? נסו עם קובץ לדוגמה</button>
+    <div class="trust">
+      <div class="glass">${ico('eye')}קריאה בלבד</div>
+      <div class="glass">${ico('lock')}בלי סיסמאות</div>
+      <div class="glass">${ico('undo')}ביטול בלחיצה</div>
+    </div>
+    <p class="fine">החיבור החי עובר דרך גוף בעל רישיון שירותי מידע פיננסי. בדמו הכל מדומה ונשאר בדפדפן.</p>`;
+  wireDrop();
+}
+function wireDrop(){
+  const drop=$('#drop'), input=$('#file'); if(!drop) return;
+  input.onchange=()=>{ const f=input.files[0]; if(f) readFile(f, t=>loadCsv(t,f.name)); };
+  ['dragenter','dragover'].forEach(e=>drop.addEventListener(e,ev=>{ ev.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{ ev.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop',ev=>{ const f=ev.dataTransfer.files[0]; if(f) readFile(f,t=>loadCsv(t,f.name)); });
+}
+function readFile(file, cb){
+  const r=new FileReader();
+  r.onload=()=>{ const t=r.result; if(t.includes('�')){ const r2=new FileReader(); r2.onload=()=>cb(r2.result); r2.readAsText(file,'windows-1255'); } else cb(t); };
+  r.readAsText(file,'utf-8');
+}
+async function loadCsv(text, name){
+  const drop=$('#drop');
+  let txs; try{ txs=parseStatement(text); if(!txs.length) throw new Error('לא נמצאו תנועות בקובץ.'); }
+  catch(e){ toast('לא הצלחנו לקרוא את הקובץ', e.message, 'warn'); if(drop){ drop.classList.remove('reading'); drop.animate([{transform:'translateX(-8px)'},{transform:'translateX(7px)'},{transform:'none'}],{duration:350}); } return; }
+  if(drop){ drop.classList.add('reading'); $('#drop-t').textContent=name; $('#drop-s').textContent=`${txs.length} תנועות · ${rangeLabel(txs)}`; void drop.offsetWidth; $('.bar i',drop).style.width='100%'; }
+  await wait(drop?900:0);
+  S.mode='upload'; S.fileName=name; start(txs);
+}
+
+/* ---------- savings: dashboard (findings stream in from the background) ---------- */
+function start(txs){
+  S.txs=txs; S.findings=findSavings(txs); S.months=new Set(txs.map(t=>t.ym)).size; S.connected=true;
+  S.connectedAt=new Date(); S.reconfirm=addMonths(S.connectedAt,6); S.revealed=0; S.streaming=true; S.shown=0;
+  setTab('savings'); $('[data-view=savings] [data-scroll]').scrollTop=0; renderDash();
+  const tick=()=>{ if(!S.streaming) return; S.revealed++; renderDash();
+    if(S.revealed<S.findings.length) setTimeout(tick,480);
+    else setTimeout(()=>{ S.streaming=false; renderDash(); const b=$('#deals-badge'); b.textContent=dealsFor().length; b.classList.add('show');
+      toast(`מצאנו ${ils(Math.round(totals().all))} בשנה`, 'ממשיכים לחפש ברקע. אין צורך לעשות כלום.'); },380); };
+  setTimeout(tick,650);
+}
+function totals(){ const vis=S.findings.slice(0,S.streaming?S.revealed:S.findings.length); return {all:vis.reduce((a,f)=>a+f.annual,0), done:S.findings.filter(f=>f.done).reduce((a,f)=>a+f.annual,0)}; }
+function countUp(el, from, to, ms){ el.dataset.to=to; if(from===to||S.instant){ el.textContent=ils(to); return; } const t0=performance.now(); const st=t=>{ if(+el.dataset.to!==to) return; const k=Math.min(1,(t-t0)/ms), e=1-Math.pow(1-k,3); el.textContent=ils(Math.round(from+(to-from)*e)); if(k<1) requestAnimationFrame(st); }; requestAnimationFrame(st); setTimeout(()=>{ if(+el.dataset.to===to) el.textContent=ils(to); },ms+60); }
+const TYPE = { duplicate_subscription:{c:'c-purple'}, phone_plan:{c:'c-blue',i:'phone'}, card_fee:{c:'c-orange',i:'card'}, bank_fee:{c:'c-orange',i:'bank'}, insurance_overlap:{c:'c-pink',i:'shield'} };
+const iconOf = f => f.type==='duplicate_subscription' ? ({video:'tv',music:'music',cloud:'cloud'})[f.fam] : TYPE[f.type].i;
+function renderDash(){
+  const n=S.streaming?S.revealed:S.findings.length, {all,done}=totals(), live=S.mode==='live';
+  const syncTxt = S.streaming ? `מנתח ברקע · ${n} מתוך ${S.findings.length}` : (live?'מחובר · מתעדכן ברקע כל לילה':'הקובץ נקרא · מחכה לקובץ הבא');
+  const src = live ? SOURCES.filter(s=>S.picked.has(s.id)).map(s=>`<span class="chip glass"><i></i>${s.name}</span>`).join('') : `<span class="chip glass file"><i></i>${esc(S.fileName)}</span>`;
+  const cards = S.findings.slice(0,n).map((f,i)=>`
+    <button class="finding glass tap ${f.done?'done':''}" data-act="finding" data-i="${i}" style="${S.shown>i?'animation:none':''}">
+      <span class="tile ${TYPE[f.type].c}">${ico(iconOf(f))}</span>
+      <span class="fb"><b>${esc(f.title)}</b><span>${esc(f.detail)}</span></span>
+      <span class="fa"><b class="num">${ils(Math.round(f.annual))}</b><small>${f.done?`<span class="donetag">${ico('check',3)}בטיפול</span>`:'בשנה'}</small></span>
+    </button>`).join('') + (S.streaming? Array.from({length:Math.min(2,S.findings.length-n)},()=>`<div class="skel glass"></div>`).join('') : '');
+  S.shown=n;
+  const cats=categorySummary(S.txs).filter(([c])=>c!=='אחר').slice(0,6), mx=cats[0]?.[1]||1;
+  const prev=$('#d-total'), prevV=prev?+prev.dataset.v:null, prevBar=$('#d-bar')?.style.width||'0';
+  $('#savings-body').innerHTML = `
+    <div class="sync glass ${S.streaming?'busy':''}"><i></i>${syncTxt}</div>
+    <div class="hero" style="${prevV!=null?'animation:none':''}">
+      <div class="k">מצאנו לך</div>
+      <div class="v"><span class="num" id="d-total" data-v="${Math.round(all)}">${ils(prevV??0)}</span><small>בשנה</small></div>
+      <div class="meta">${n} הזדמנויות · ${S.txs.length} תנועות ב-${S.months} חודשים</div>
+      <div class="prog"><div class="track"><i id="d-bar" style="width:${prevBar}"></i></div><div class="lb"><span>בטיפול: <span class="num">${ils(Math.round(done))}</span></span><span>${S.findings.filter(f=>f.done).length} מתוך ${S.findings.length}</span></div></div>
+    </div>
+    <div class="chips">${src}</div>
+    <div class="sec"><h3>הזדמנויות</h3><span>מהגדולה לקטנה</span></div>
+    <div class="list">${cards}</div>
+    ${S.streaming?'':`
+    <div class="sec"><h3>לאן הולך הכסף</h3><span>ממוצע לחודש</span></div>
+    <div class="glass card cats">${cats.map(([c,v])=>`<div class="ct"><span>${c}</span><em class="num">${ils(Math.round(v))}</em><div class="bar"><i data-w="${(v/mx*100).toFixed(1)}"></i></div></div>`).join('')}</div>
+    <div class="sec"><h3>ברקע</h3><span>בלי לפתוח את האפליקציה</span></div>
+    <div class="glass card feed">${feedRows().map(r=>`<div class="fr"><span class="dot ${r.t?'t':''}">${ico(r.i)}</span><div><b>${r.b}</b><span>${r.s}</span></div></div>`).join('')}</div>
+    <p class="note">${live?`ההסכמה בתוקף עד <span class="num">${fmtDate(addMonths(S.connectedAt,12*S.years))}</span> · אישור חוזר ב-<span class="num">${fmtDate(S.reconfirm)}</span>. <button class="link" data-act="conn">ניהול וביטול</button>`:`הקובץ נקרא בדפדפן בלבד ולא נשמר. <button class="link" data-act="conn">מחיקת הנתונים</button>`}</p>`}`;
+  countUp($('#d-total'), prevV??0, Math.round(all), prevV==null?900:600);
+  void $('#savings-body').offsetWidth;   // commit start widths so the bars spring to their new size
+  $('#d-bar').style.width = all? (done/all*100)+'%':'0'; $$('.cats .bar i').forEach(i=>i.style.width=i.dataset.w+'%');
+}
+function feedRows(){
+  return S.mode==='live' ? [
+    {i:'ok', b:`סנכרון ראשון הושלם · ${S.txs.length} תנועות`, s:'עכשיו · דרך השותף המורשה'},
+    {i:'clock', t:1, b:'סנכרון אוטומטי כל לילה ב-03:00', s:'חיוב חדש או מנוי חדש יופיעו כאן לבד'},
+    {i:'bell', t:1, b:'אישור המשך בלחיצה אחת', s:`ב-${fmtDate(S.reconfirm)} · לפי כללי ההסכמה`}]
+  : [ {i:'ok', b:`${esc(S.fileName)} נקרא במכשיר`, s:`עכשיו · ${S.txs.length} תנועות`},
+      {i:'bell', t:1, b:'תזכורת חודשית לקובץ חדש', s:'או חיבור חי, ואז אין צורך בקבצים'},
+      {i:'link', t:1, b:'רוצים שזה יקרה לבד?', s:'<button class="link" data-act="connect">חיבור דרך שותף מורשה</button>'} ];
+}
+
+/* ---------- deals (host app) ---------- */
+function dealsFor(){
+  const D=[];
+  for(const f of S.findings){
+    if(f.type==='phone_plan') D.push({c:'c-blue',i:'phone',t:'סלולר למדא · 1,000GB',s:`${ils(49.90,2)} לחודש במקום ${ils(f.current,2)}`,save:f.annual});
+    if(f.type==='card_fee') D.push({c:'c-orange',i:'card',t:'כרטיס בלי דמי כרטיס',s:'הצעה של כרטיס נוף ללקוחות האפליקציה',save:f.annual});
+    if(f.type==='insurance_overlap') D.push({c:'c-pink',i:'shield',t:'בדיקת כפל ביטוח בחינם',s:'סוכן מורשה עובר על הפוליסות שלך',save:f.annual});
+  }
+  return D;
+}
+function renderDeals(){
+  const D=S.connected?dealsFor():[];
+  const top = S.connected ? `<div class="sec" style="margin-top:4px"><h3>בשבילך, לפי החיסכון</h3><span>מחיסכון+</span></div>
+    ${D.map((d,i)=>`<div class="deal glass" style="animation-delay:${i*70}ms"><div class="band ${d.c}"><span class="tile">${ico(d.i)}</span><span class="mt">מותאם לך</span><b>${d.t}</b></div>
+      <div class="bd"><div class="tx"><span>${d.s}</span><b>חוסך ${ils(Math.round(d.save))} בשנה</b></div><button class="pill tap" data-act="deal">לדיל</button></div></div>`).join('')}`
+    : `<div class="promo glass"><span class="tile c-green">${ico('spark')}</span><div class="tx"><b>דילים לפי ההוצאות שלך</b><span>מפעילים את מודול החיסכון, ומכאן מוצגים רק דילים שחוסכים לך כסף.</span></div></div>
+       <button class="btn tap" style="margin-top:12px" data-act="tab" data-tab="savings">הפעלת חיסכון+</button>`;
+  const more=[{c:'c-indigo',i:'dumbbell',t:'מכון כושר אופסילון',s:'חודש ראשון חינם'},{c:'c-teal',i:'cup',t:'קפה פסי',s:'1+1 על כל משקה'},{c:'c-green',i:'bolt',t:'חשמל אומגה',s:'7% הנחה בחשבון'},{c:'c-purple',i:'tv',t:'טלוויזיה אטא',s:'3 חודשים בחצי מחיר'}];
+  $('#deals-body').innerHTML = top + `<div class="sec"><h3>עוד דילים</h3><span>כל המותגים בדויים</span></div>
+    <div class="mini-deals">${more.map((m,i)=>`<button class="md glass tap" data-act="deal" style="animation-delay:${(D.length+i)*60}ms"><span class="tile ${m.c}">${ico(m.i)}</span><b>${m.t}</b><span>${m.s}</span></button>`).join('')}</div>`;
+}
+
+/* ---------- sheets ---------- */
+function openSheet(html, tall=false){
+  const sh=$('#sheet'); sh.className='sheet'+(tall?' tall':''); sh.innerHTML=html; paint(sh);
+  $('#app').classList.add('sheeted'); void sh.offsetWidth; sh.classList.add('show');
+}
+function closeSheet(){ $('#sheet').classList.remove('show'); $('#app').classList.remove('sheeted'); }
+
+/* connect flow: 3 pages inside one sheet */
+function openConnect(){
+  S.page=0;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><button class="ib tap" data-act="cn-back" aria-label="חזרה">${ico('back',2.4)}</button><div class="dots" id="cn-dots"><i></i><i></i><i></i></div><button class="ib tap" data-act="close" aria-label="סגירה">${ico('close',2.4)}</button></div>
+    <div class="pages"><div class="track" id="cn-track" style="--p:0">
+      <div class="pg" id="pg0"></div><div class="pg" id="pg1"></div><div class="pg" id="pg2"></div>
+    </div></div>
+    <div class="sh-foot"><button class="btn tap" id="cn-next" data-act="cn-next"></button></div>`, true);
+  renderPg0(); renderPg1(); renderPg2(); cnSync();
+}
+function srcRow(s){ return `<button class="row tap ${S.picked.has(s.id)?'on':''}" data-act="src" data-id="${s.id}" style="--inset:62px"><span class="logo" style="background:${s.color}">${s.l}</span><span class="nm">${s.name}<small>${s.note}</small></span><span class="check">${ico('check',3)}</span></button>`; }
+function renderPg0(){
+  $('#pg0').innerHTML = `<h2 class="sh-title">מה לחבר?</h2><p class="sh-sub">בוחרים רק את מה שרוצים. אפשר להוסיף עוד אחר כך.</p>
+    <div class="tip">${ico('spark')}כדאי להתחיל בכרטיס האשראי. שם רוב ההוצאות.</div>
+    <p class="gh">כרטיסי אשראי</p><div class="group">${SOURCES.filter(s=>s.kind==='card').map(srcRow).join('')}</div>
+    <p class="gh">חשבונות בנק</p><div class="group">${SOURCES.filter(s=>s.kind==='bank').map(srcRow).join('')}</div>
+    <p class="gf">כל שמות הבנקים והכרטיסים בדמו בדויים.</p>`;
+}
+function renderPg1(){
+  $('#pg1').innerHTML = `<h2 class="sh-title">תעודת זהות</h2><p class="sh-sub">השותף המורשה מוודא שהמספר תואם למספר הרשום בכל מקור. מקלידים פעם אחת.</p>
+    <div class="idbox"><input class="idin num" id="idn" inputmode="numeric" autocomplete="off" placeholder="000 000 000" aria-label="מספר תעודת זהות">
+      <div class="idmsg" id="idmsg"></div><button class="sample tap" data-act="fill-id" style="margin-top:0">מילוי מספר הדגמה</button></div>
+    <div class="group never">
+      <div class="row"><span class="x">${ico('x')}</span><span class="nm">לא נבקש מספר כרטיס אשראי</span></div>
+      <div class="row"><span class="x">${ico('x')}</span><span class="nm">לא נבקש סיסמה לבנק</span></div>
+      <div class="row"><span class="y">${ico('ok')}</span><span class="nm">הכניסה לאפליקציה בזיהוי ביומטרי</span></div>
+    </div>`;
+  $('#idn').addEventListener('input', checkId);
+  if(S.idn){ $('#idn').value=fmtId(S.idn); checkId(); }
+}
+function renderPg2(){
+  $('#pg2').innerHTML = `<h2 class="sh-title">ההסכמה שלך</h2>
+    <div class="partner"><span class="tile c-green">${ico('shield')}</span><div><b>שותף מורשה לדוגמה בע״מ</b><span>בעל רישיון שירותי מידע פיננסי (שם בדוי)</span></div></div>
+    <p class="gh">מה משתפים</p>
+    <div class="group">${BASKETS.map(b=>`<button class="row tap ${S.baskets.has(b.id)?'on':''}" data-act="basket" data-id="${b.id}"><span class="nm">${b.name}<small>${b.note}</small></span><span class="switch"><i></i></span></button>`).join('')}</div>
+    <p class="gf">לא משתפים: סיסמאות, מספרי כרטיס, הרשאה לבצע פעולות.</p>
+    <p class="gh">לכמה זמן</p>
+    <div class="seg" data-seg="years" style="--n:3;--i:${S.years-1}"><span class="thumb"></span>${[1,2,3].map(y=>`<button class="${S.years===y?'on':''}" data-v="${y}">${y===1?'שנה':y===2?'שנתיים':'3 שנים'}</button>`).join('')}</div>
+    <div class="group facts" style="margin-top:12px">
+      <div class="row">${ico('cal')}<span class="nm">בתוקף עד <b class="num" id="c-until">${fmtDate(addMonths(new Date(),12*S.years))}</b>.</span></div>
+      <div class="row">${ico('bell')}<span class="nm">כל 6 חודשים נשאל בלחיצה אחת אם להמשיך. בלי אישור, החיבור נסגר מעצמו.</span></div>
+      <div class="row">${ico('undo')}<span class="nm">ביטול בכל רגע. הגישה נסגרת והנתונים נמחקים.</span></div>
+    </div>
+    <div class="group" style="margin-top:12px"><button class="row tap ${S.agreed?'on':''}" data-act="agree"><span class="nm">קראתי ואני מאשר/ת את תנאי ההסכמה</span><span class="switch"><i></i></span></button></div>`;
+  wireSeg($('[data-seg=years]', $('#pg2')));
+}
+const fmtId = d => d.replace(/\D/g,'').slice(0,9).replace(/(\d{3})(?=\d)/g,'$1 ');
+function validId(v){ v=(v||'').replace(/\D/g,''); if(v.length!==9) return false; let s=0; for(let i=0;i<9;i++){ let d=+v[i]*((i%2)+1); s+= d>9?d-9:d; } return s%10===0; }
+function checkId(){
+  const el=$('#idn'), d=el.value.replace(/\D/g,'').slice(0,9), m=$('#idmsg'); el.value=fmtId(d);
+  el.classList.remove('ok','bad'); m.className='idmsg'; m.textContent='';
+  if(d.length===9){ if(validId(d)){ el.classList.add('ok'); m.classList.add('ok'); m.textContent='המספר תקין. נאמת אותו מול כל מקור.'; } else { el.classList.add('bad'); m.classList.add('bad'); m.textContent='ספרת הביקורת לא מתאימה. כדאי לבדוק שוב.'; } }
+  S.idn = validId(d) ? d : ''; cnSync();
+}
+function cnSync(){
+  const b=$('#cn-next'); if(!b) return; $('#cn-track').style.setProperty('--p',S.page);
+  $$('#cn-dots i').forEach((d,i)=>d.classList.toggle('on',i===S.page));
+  $('[data-act=cn-back]').classList.toggle('hide',S.page===0);
+  const n=S.picked.size;
+  if(S.page===0){ b.disabled=!n; b.textContent= n?`המשך עם ${n===1?'מקור אחד':n+' מקורות'}`:'בוחרים לפחות מקור אחד'; }
+  if(S.page===1){ b.disabled=!S.idn; b.textContent='המשך'; }
+  if(S.page===2){ b.disabled=!(S.agreed&&S.baskets.size); b.innerHTML=`${ico('face',1.6)}אישור באפליקציית הבנק`; }
+}
+
+/* simulated bank approval, one per source */
+async function runBank(){ closeSheet(); S.queue=SOURCES.filter(s=>S.picked.has(s.id)); await wait(250); nextBank(); }
+function nextBank(){
+  const s=S.queue[0], bk=$('#bankapp');
+  if(!s){ bk.classList.remove('show'); $('#app').classList.remove('inbank'); S.mode='live'; S.fileName=''; setTimeout(()=>start(parseStatement(sampleText())),350); return; }
+  bk.style.setProperty('--bk',s.color); $('#bk-logo').textContent=s.l; $('#bk-logo').style.color=s.color; $('#bk-name').textContent=s.name;
+  $('#bk-data').textContent=BASKETS.filter(b=>S.baskets.has(b.id)).map(b=>b.name).join(', ');
+  $('#bk-until').textContent=fmtDate(addMonths(new Date(),12*S.years));
+  $('#bk-id').textContent='•••••••'+(S.idn||demoId()).slice(-2);
+  const f=$('#faceid'); f.className='faceid'; f.innerHTML=ico('face',1.3); $('#facemsg').textContent='אישור בזיהוי פנים'; $('#bk-ok').disabled=false;
+  void bk.offsetWidth; bk.classList.add('show'); $('#app').classList.add('inbank');
+}
+function bankOk(){
+  const f=$('#faceid'); $('#bk-ok').disabled=true; f.classList.add('scan'); $('#facemsg').textContent='סורקים…';
+  setTimeout(()=>{ f.classList.remove('scan'); f.classList.add('done'); f.innerHTML=ico('ok',1.3); $('#facemsg').textContent='אושר. חוזרים לאפליקציית הדילים.'; },1000);
+  setTimeout(()=>{ S.queue.shift(); $('#bankapp').classList.remove('show'); setTimeout(nextBank,500); },1750);
+}
+
+/* finding detail */
+function openFinding(i, again){
+  const f=S.findings[i]; let opts='', how=[], cta='', head='', sub='';
+  if(f.members){
+    const ins=f.type==='insurance_overlap';
+    head = ins?'איזו פוליסה להשאיר?':'איזה מנוי להשאיר?';
+    sub = ins?'קודם מוודאים מול הר הביטוח שהכיסוי באמת חופף.':'את השאר נבטל בשמך. אפשר לחזור בכל רגע.';
+    opts = `<div class="group" style="margin-top:12px">${f.members.map(m=>`<button class="row opt tap ${m.name===f.keep?'on':''}" data-act="keep" data-i="${i}" data-v="${esc(m.name)}"><span class="radio"></span><span class="nm">${esc(m.name)}<small>${m.name===f.keep?'נשאר':'יבוטל'}</small></span><span class="pr num">${ils(m.monthly,2)}</span></button>`).join('')}</div>`;
+    how = ins?['בודקים את הכיסויים בקובץ הר הביטוח','סוכן מורשה מאשר שאין פגיעה בכיסוי','רק אז מבטלים את הפוליסה הכפולה']:['שולחים בקשת ביטול לכל מנוי מיותר','החיוב הבא כבר לא מגיע','מעדכנים כאן כשהביטול נקלט'];
+    cta = ins?'לבדיקת הכפל':'ביטול המנויים המיותרים';
+  } else if(f.type==='phone_plan'){
+    head='בוחרים חבילה חדשה'; sub=`היום: ${esc(f.merchant)}, ${ils(f.current,2)} לחודש. המספר נשאר אותו מספר.`;
+    opts = `<div class="group" style="margin-top:12px">${PHONE_PLANS.map((p,j)=>`<button class="row opt tap ${j===f.plan?'on':''}" data-act="plan" data-i="${i}" data-v="${j}"><span class="radio"></span><span class="nm">${p.name}${p.deal?'<span class="tag">דיל באפליקציה</span>':''}<small>${p.note}</small></span><span class="pr num">${ils(p.price,2)}</span></button>`).join('')}</div>`;
+    how=['ממלאים בקשת ניוד בשמך','החבילה החדשה פעילה תוך יום עסקים','החבילה הישנה נסגרת לבד']; cta='מעבר לחבילה';
+  } else if(f.type==='card_fee'){
+    head='ביטול דמי כרטיס'; sub='נבקש מחברת האשראי לוותר על דמי הכרטיס. אם לא יסכימו, נציע כרטיס בלי דמי כרטיס מתוך הדילים.';
+    how=['שולחים בקשת ויתור בשמך','מעדכנים אותך כשמגיעה תשובה','אם צריך, מציעים כרטיס חלופי']; cta='שליחת בקשה';
+  } else {
+    head='מעבר למסלול עמלות בסיסי'; sub='נשלח לבנק בקשה לעבור למסלול שמתאים לכמות הפעולות שלך.';
+    how=['שולחים בקשה מסודרת לבנק','הבנק מאשר בדרך כלל תוך כמה ימים','העמלה יורדת מהחודש הבא']; cta='שליחת בקשה';
+  }
+  const html = `<div class="grab"></div><div class="sh-head"><span></span><button class="ib tap" data-act="close" aria-label="סגירה">${ico('close',2.4)}</button></div>
+    <div class="sh-body" id="f-body">
+      <div class="fhead"><span class="tile ${TYPE[f.type].c}">${ico(iconOf(f))}</span><h3>${esc(f.title)}</h3></div>
+      <p class="sh-sub" style="margin-top:10px">${esc(f.detail)}</p>
+      <p class="gh" style="margin-top:18px;margin-bottom:0">${head}</p><p class="gf" style="margin-top:2px">${sub}</p>
+      ${opts}
+      <div class="savebox"><span>חיסכון שנתי</span><b class="num" id="sh-save">${ils(Math.round(f.annual))}</b></div>
+      <p class="gh">איך זה עובד</p><div class="group how">${how.map((h,k)=>`<div class="row"><i>${k+1}</i><span class="nm" style="font-size:14px">${h}</span></div>`).join('')}</div>
+      <p class="gf">בדמו שום בקשה לא נשלחת באמת.</p>
+    </div>
+    <div class="sh-foot" id="f-foot">${f.done?`<button class="btn soft" disabled>${ico('check',2.6)}כבר בטיפול</button>`:`<button class="btn tap" data-act="do" data-i="${i}">${cta}</button>`}<button class="btn plain tap" data-act="close">לא עכשיו</button></div>`;
+  if(again){ const y=$('#f-body').scrollTop; $('#sheet').innerHTML=html; $('#f-body').scrollTop=y; $('#sh-save').animate([{transform:'scale(1.12)'},{transform:'none'}],{duration:450,easing:'cubic-bezier(.2,1.4,.4,1)'}); return; }
+  openSheet(html);
+}
+async function doFinding(i){
+  const f=S.findings[i];
+  $('#f-body').innerHTML=`<div class="success"><svg class="ring" viewBox="0 0 100 100" fill="none" stroke="var(--green)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="45"/><path d="M31 51l13 13 26-27"/></svg><b>בטיפול</b><span>${ils(Math.round(f.annual))} בשנה בדרך אליך</span></div>`;
+  $('#f-foot').innerHTML=''; f.done=true; await wait(1200); closeSheet(); renderDash();
+  toast(`${ils(Math.round(f.annual))} בשנה בדרך אליך`, 'נעדכן כאן כשזה נסגר');
+}
+
+/* connections + consent */
+function openConn(){
+  if(!S.connected){ openSheet(`<div class="grab"></div><div class="sh-head"><span></span><button class="ib tap" data-act="close" aria-label="סגירה">${ico('close',2.4)}</button></div>
+    <div class="sh-body"><h2 class="sh-title">חיבורים</h2><p class="sh-sub">עדיין לא חובר אף מקור. חיבור אחד מספיק, ומשם הכל קורה ברקע.</p></div>
+    <div class="sh-foot"><button class="btn tap" data-act="connect">חיבור דרך שותף מורשה</button></div>`); return; }
+  const live=S.mode==='live', until=fmtDate(addMonths(S.connectedAt,12*S.years));
+  openSheet(`<div class="grab"></div><div class="sh-head"><span></span><button class="ib tap" data-act="close" aria-label="סגירה">${ico('close',2.4)}</button></div>
+    <div class="sh-body">
+      <h2 class="sh-title">${live?'החיבורים שלך':'הנתונים שלך'}</h2>
+      <p class="sh-sub">${live?'דרך שותף מורשה לדוגמה בע״מ. קריאה בלבד.':'הקובץ נקרא בדפדפן הזה בלבד. בפיילוט אמיתי: מחיקה מהשרת בלחיצה.'}</p>
+      ${live? SOURCES.filter(s=>S.picked.has(s.id)).map(s=>`<p class="gh">${s.kind==='card'?'כרטיס אשראי':'חשבון בנק'}</p><div class="group">
+        <div class="row" style="--inset:62px"><span class="logo" style="background:${s.color}">${s.l}</span><span class="nm">${s.name}<small>${BASKETS.filter(b=>S.baskets.has(b.id)).length} סוגי מידע · קריאה בלבד</small></span><span class="status-on">פעיל</span></div>
+        <div class="row"><span class="nm">בתוקף עד</span><span class="val num">${until}</span></div>
+        <div class="row"><span class="nm">אישור חוזר הבא</span><span class="val num">${fmtDate(S.reconfirm)}</span></div></div>`).join('')
+      : `<p class="gh">קבצים</p><div class="group"><div class="row" style="--inset:62px"><span class="tile c-orange" style="width:34px;height:34px;border-radius:9px">${ico('file')}</span><span class="nm">${esc(S.fileName)}<small>${S.txs.length} תנועות · ${rangeLabel(S.txs)}</small></span><span class="status-on">נקרא</span></div></div>`}
+      <p class="gh">עוד מקורות שמגדילים את החיסכון</p>
+      <div class="group"><label class="row tap" style="--inset:62px"><input type="file" hidden data-extra="הר הביטוח"><span class="tile c-pink" style="width:34px;height:34px;border-radius:9px">${ico('shield')}</span><span class="nm">קובץ הר הביטוח<small>מאמת כפל ביטוח. ביטוחים לא עוברים בחיבור הבנקאי.</small></span><span class="pill">הוספה</span></label>
+      <label class="row tap" style="--inset:62px"><input type="file" hidden data-extra="דוח נתוני אשראי"><span class="tile c-indigo" style="width:34px;height:34px;border-radius:9px">${ico('file')}</span><span class="nm">דוח נתוני אשראי<small>דוח חינם פעם בשנה</small></span><span class="pill">הוספה</span></label></div>
+      ${live?`<div class="group" style="margin-top:16px"><button class="row tap" data-act="push"><span class="nm" style="color:var(--tint)">הדגמה: תזכורת אישור 6 חודשים</span></button></div>`:''}
+    </div>
+    <div class="sh-foot"><button class="btn red tap" data-act="revoke">${live?'ביטול ההסכמה וניתוק':'מחיקת כל הנתונים'}</button></div>`);
+  $$('#sheet [data-extra]').forEach(inp=>inp.onchange=()=>{ if(inp.files[0]){ inp.parentNode.querySelector('.pill').textContent='התקבל'; toast(`${inp.dataset.extra}: התקבל`,'בדמו הקובץ הזה לא נקרא'); } });
+}
+function confirmRevoke(){
+  const live=S.mode==='live';
+  $('#sheet .sh-body').innerHTML=`<h2 class="sh-title">${live?'לנתק את כל החשבונות?':'למחוק את הנתונים?'}</h2><p class="sh-sub">${live?'השותף המורשה מפסיק לקרוא מידע מיד, והנתונים שנאספו נמחקים. מה שכבר חסכת נשאר.':'הקובץ והממצאים יימחקו מהמכשיר.'}</p>`;
+  $('#sheet .sh-foot').innerHTML=`<button class="btn red tap" data-act="revoke-yes">כן, ${live?'לנתק':'למחוק'}</button><button class="btn plain tap" data-act="close">ביטול</button>`;
+}
+function resetAll(){
+  Object.assign(S,{connected:false,mode:null,txs:[],findings:[],fileName:'',agreed:false,idn:'',streaming:false,revealed:0,shown:0});
+  $('#deals-badge').classList.remove('show'); renderSavings(); renderDeals(); setTab('savings');
+}
+
+/* theme */
+function setTheme(v){
+  if(v==='auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme=v;
+  try{ localStorage.setItem('hs-theme',v); }catch(e){}
+  $$('[data-seg=theme]').forEach(sg=>{ const bs=$$('button',sg), i=Math.max(0,bs.findIndex(b=>b.dataset.v===v)); sg.style.setProperty('--i',i); bs.forEach((b,j)=>b.classList.toggle('on',j===i)); });
+}
+function wireSeg(sg){
+  $$('button',sg).forEach((b,i)=>b.addEventListener('click',()=>{
+    sg.style.setProperty('--i',i); $$('button',sg).forEach(x=>x.classList.toggle('on',x===b));
+    if(sg.dataset.seg==='theme') setTheme(b.dataset.v);
+    if(sg.dataset.seg==='years'){ S.years=+b.dataset.v; $('#c-until').textContent=fmtDate(addMonths(new Date(),12*S.years)); }
+  }));
+}
+
+/* ---------- actions ---------- */
+const ACT = {
+  tab:el=>{ closeSheet(); setTab(el.dataset.tab); },
+  connect:()=>{ if($('#sheet').classList.contains('show')){ closeSheet(); setTimeout(openConnect,380); } else openConnect(); },
+  sample:()=>loadCsv(sampleText(),'sample-bank.csv'),
+  close:()=>closeSheet(),
+  src:el=>{ const id=el.dataset.id; S.picked.has(id)?S.picked.delete(id):S.picked.add(id); el.classList.toggle('on'); cnSync(); },
+  basket:el=>{ const id=el.dataset.id; S.baskets.has(id)?S.baskets.delete(id):S.baskets.add(id); el.classList.toggle('on'); cnSync(); },
+  agree:el=>{ S.agreed=!S.agreed; el.classList.toggle('on',S.agreed); cnSync(); },
+  'fill-id':()=>{ $('#idn').value=SAMPLE_ID; checkId(); },
+  'cn-next':()=>{ if(S.page<2){ S.page++; cnSync(); if(S.page===1 && !S.idn) setTimeout(()=>$('#idn')?.focus({preventScroll:true}),450); } else runBank(); },
+  'cn-back':()=>{ if(S.page>0){ S.page--; cnSync(); } },
+  'bank-ok':()=>bankOk(),
+  'bank-no':()=>{ $('#bankapp').classList.remove('show'); $('#app').classList.remove('inbank'); S.queue=[]; toast('הבקשה נדחתה','אפשר לנסות שוב בכל רגע','warn'); },
+  finding:el=>openFinding(+el.dataset.i),
+  keep:el=>{ const f=S.findings[+el.dataset.i]; f.keep=el.dataset.v; recalc(f); openFinding(+el.dataset.i,true); },
+  plan:el=>{ const f=S.findings[+el.dataset.i]; f.plan=+el.dataset.v; recalc(f); openFinding(+el.dataset.i,true); },
+  do:el=>doFinding(+el.dataset.i),
+  conn:()=>openConn(),
+  revoke:()=>confirmRevoke(),
+  'revoke-yes':()=>{ const live=S.mode==='live'; closeSheet(); setTimeout(()=>{ resetAll(); toast(live?'ההסכמה בוטלה':'הנתונים נמחקו', live?'הגישה נסגרה והנתונים נמחקו':'שום דבר לא נשאר במכשיר'); },350); },
+  push:()=>{ closeSheet(); setTimeout(()=>$('#push').classList.add('show'),400); },
+  'push-yes':()=>{ $('#push').classList.remove('show'); if(S.reconfirm) S.reconfirm=addMonths(S.reconfirm,6); if(S.connected && S.tab==='savings') renderDash(); toast('ממשיכים',S.reconfirm?`האישור הבא ב-${fmtDate(S.reconfirm)}`:''); },
+  'push-no':()=>{ $('#push').classList.remove('show'); resetAll(); toast('החיבור נותק','הנתונים נמחקו'); },
+  deal:()=>toast('כאן נפתח הדיל','באפליקציה המארחת. בדמו אין מעבר אמיתי'),
+  jump:el=>jump(el.dataset.to),
+};
+document.addEventListener('pointerdown',()=>{ S.instant=false; },{capture:true});
+function wireActions(){
+  document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if(!el||el.disabled) return; const fn=ACT[el.dataset.act]; if(fn){ if(el.tagName!=='LABEL') e.preventDefault(); fn(el); } });
+}
+
+/* ---------- deep links (review + screenshots): #v=dash&theme=dark&sheet=finding&i=0 ---------- */
+function demoState(mode){
+  S.mode=mode; S.idn=demoId(); S.fileName=mode==='live'?'':'sample-bank.csv';
+  S.txs=parseStatement(sampleText()); S.findings=findSavings(S.txs); S.months=new Set(S.txs.map(t=>t.ym)).size;
+  S.connected=true; S.connectedAt=new Date(); S.reconfirm=addMonths(S.connectedAt,6); S.streaming=false; S.revealed=S.findings.length; S.shown=0;
+  const b=$('#deals-badge'); b.textContent=dealsFor().length; b.classList.add('show');
+}
+function jump(to){
+  closeSheet(); $('#push').classList.remove('show'); $('#bankapp').classList.remove('show');
+  if(to==='setup'){ resetAll(); return; }
+  if(!S.connected) demoState('live');
+  S.streaming=false;
+  if(to==='dash'){ setTab('savings'); renderDash(); }
+  if(to==='deals'){ renderDash(); setTab('deals'); }
+  if(to==='conn'){ setTab('savings'); renderDash(); setTimeout(openConn,200); }
+}
+function applyHash(){
+  const q=new URLSearchParams(location.hash.slice(1)), v=q.get('v');
+  if(q.get('theme')) setTheme(q.get('theme'));
+  if(!v) return;
+  S.instant = v!=='stream';   // deep links render final numbers at once (stable screenshots)
+  if(v==='connect'||v==='bank'){
+    S.idn=demoId(); S.agreed=true; openConnect(); S.page=+(q.get('p')||0); renderPg1(); renderPg2(); cnSync();
+    if(v==='bank'){ closeSheet(); S.queue=SOURCES.filter(s=>S.picked.has(s.id)); nextBank(); }
+    return;
+  }
+  if(v==='stream'){ S.mode='live'; start(parseStatement(sampleText())); return; }
+  demoState(q.get('mode')==='file'?'upload':'live');
+  (q.get('done')||'').split(',').filter(Boolean).forEach(i=>{ if(S.findings[+i]) S.findings[+i].done=true; });
+  renderDash();
+  if(v==='deals') setTab('deals');
+  if(q.get('sheet')==='finding') openFinding(+(q.get('i')||0));
+  if(q.get('sheet')==='conn') openConn();
+  if(q.get('sheet')==='push') $('#push').classList.add('show');
+  if(q.get('scroll')) setTimeout(()=>{ $(`[data-view=${S.tab}] [data-scroll]`).scrollTop=+q.get('scroll'); },50);
+}
+
+/* ---------- fit the phone frame to short desktop windows ---------- */
+function fit(){ const d=$('#device'); if(innerWidth<=820){ d.style.removeProperty('--fit'); return; } d.style.setProperty('--fit', Math.min(1,(innerHeight-40)/844).toFixed(3)); }
+
+/* ---------- init ---------- */
+(function init(){
+  installSprings(); paint(); wirePress(); wireActions(); wireScroll();
+  $$('[data-seg=theme]').forEach(wireSeg);
+  let t='light'; try{ t=localStorage.getItem('hs-theme')||'light'; }catch(e){} setTheme(t);
+  renderSavings(); renderDeals(); fit(); addEventListener('resize',fit);
+  applyHash();
+})();
+</script>
+</body>
+</html>
